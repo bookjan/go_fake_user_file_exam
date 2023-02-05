@@ -5,9 +5,15 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 )
+
+const SORT_NAME = "sort_name"
+const SORT_TIME = "sort_time"
+const ASC_SORT = "asc"
+const DESC_SORT = "desc"
 
 type User struct {
 	id          string
@@ -19,7 +25,7 @@ type Folder struct {
 	id          string
 	name        string
 	description string
-	createdAt   string
+	createdAt   time.Time
 }
 
 var USER_ID_BASE int = 0
@@ -51,6 +57,8 @@ Commonds:
 
 		scanner.Scan()
 		text := scanner.Text()
+
+		fmt.Println(text)
 
 		if text == "exit" {
 			break
@@ -137,7 +145,7 @@ func create_folder(args []string) {
 		id:          folderId,
 		name:        folderName,
 		description: description,
-		createdAt:   time.Now().Format("2006-01-02 15:04:05"),
+		createdAt:   time.Now(),
 	}
 
 	user.folderIdMap[folderId] = true
@@ -177,6 +185,55 @@ func delete_folder(args []string) {
 }
 
 func get_folders(args []string) {
+	if len(args) < 1 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
+
+	userName := args[0]
+	user, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+	orderField := SORT_NAME
+	if len(args) > 1 {
+		orderField = args[1]
+	}
+	order := ASC_SORT
+	if len(args) > 2 {
+		order = args[2]
+	}
+
+	folders := []Folder{}
+	for k, _ := range user.folderIdMap {
+		folders = append(folders, folderMap[k])
+	}
+
+	if orderField == SORT_NAME && ASC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].name < folders[j].name
+		})
+	}
+	if orderField == SORT_NAME && DESC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].name > folders[j].name
+		})
+	}
+	if orderField == SORT_TIME && ASC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].createdAt.Before(folders[j].createdAt)
+		})
+	}
+	if orderField == SORT_TIME && DESC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].createdAt.After(folders[j].createdAt)
+		})
+	}
+
+	for _, v := range folders {
+		fmt.Printf("%v|%v|%v|%v|%v\n", v.id, v.name, v.description, v.createdAt.Format("2006-01-02 15:04:05.0000"), userName)
+	}
 
 }
 
