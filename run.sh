@@ -11,5 +11,7 @@ get_folders user1
 get_folders user1 sort_name desc
 get_folders user1 sort_time asc
 get_folders user1 sort_time desc
+rename_folders user1 1001 Jello
+get_folders user1
 exit
 EOF

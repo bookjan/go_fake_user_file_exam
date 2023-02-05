@@ -32,7 +32,7 @@ var USER_ID_BASE int = 0
 var FOLDER_ID_BASE int = 1000
 
 var userMap = make(map[string]User)
-var folderMap = make(map[string]Folder)
+var folderMap = make(map[string]*Folder)
 
 func main() {
 	fmt.Println(`Go's fake user and file CLI program`)
@@ -141,7 +141,7 @@ func create_folder(args []string) {
 
 	FOLDER_ID_BASE += 1
 	folderId := fmt.Sprint(FOLDER_ID_BASE)
-	folderMap[folderId] = Folder{
+	folderMap[folderId] = &Folder{
 		id:          folderId,
 		name:        folderName,
 		description: description,
@@ -200,7 +200,7 @@ func get_folders(args []string) {
 	folders := []Folder{}
 	folderIds := []string{}
 	for k := range user.folderIdMap {
-		folders = append(folders, folderMap[k])
+		folders = append(folders, *folderMap[k])
 		folderIds = append(folderIds, k)
 	}
 
@@ -245,7 +245,27 @@ func get_folders(args []string) {
 }
 
 func rename_folders(args []string) {
+	if len(args) < 3 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
 
+	userName, folderId, newFolderName := args[0], args[1], args[2]
+	_, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	_, ok = folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder_id not found")
+		return
+	}
+
+	folderMap[folderId].name = newFolderName
+	fmt.Println(folderMap[folderId])
+	fmt.Println("Success")
 }
 
 func upload_file(args []string) {
