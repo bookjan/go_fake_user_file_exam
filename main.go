@@ -10,9 +10,9 @@ import (
 )
 
 type User struct {
-	id        string
-	name      string
-	folderIds []string
+	id          string
+	name        string
+	folderIdMap map[string]bool
 }
 
 type Folder struct {
@@ -107,9 +107,9 @@ func register(args []string) {
 	if !ok {
 		USER_ID_BASE += 1
 		userMap[userName] = User{
-			id:        fmt.Sprint(USER_ID_BASE),
-			name:      userName,
-			folderIds: []string{},
+			id:          fmt.Sprint(USER_ID_BASE),
+			name:        userName,
+			folderIdMap: map[string]bool{},
 		}
 
 		fmt.Printf("Success")
@@ -119,7 +119,7 @@ func register(args []string) {
 }
 
 func create_folder(args []string) {
-	if len(args) != 3 {
+	if len(args) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
@@ -140,13 +140,40 @@ func create_folder(args []string) {
 		createdAt:   time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	user.folderIds = append(user.folderIds, folderId)
+	user.folderIdMap[folderId] = true
 
 	fmt.Println(folderId)
 }
 
 func delete_folder(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
 
+	userName, folderId := args[0], args[1]
+	user, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	_, ok = folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder doesn’t exist")
+		return
+	}
+
+	_, ok = user.folderIdMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder owner not match")
+		return
+	}
+
+	delete(folderMap, folderId)
+	delete(user.folderIdMap, folderId)
+
+	fmt.Println(folderId)
 }
 
 func get_folders(args []string) {
