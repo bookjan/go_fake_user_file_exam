@@ -3,15 +3,30 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 )
 
-const MAX_USER_NUMBER int = 99999
+type User struct {
+	id        string
+	name      string
+	folderIds []string
+}
 
-var userMap = map[string]int{}
+type Folder struct {
+	id          string
+	name        string
+	description string
+	createdAt   string
+}
+
+var USER_ID_BASE int = 0
+var FOLDER_ID_BASE int = 1000
+
+var userMap = make(map[string]User)
+var folderMap = make(map[string]Folder)
 
 func main() {
 	fmt.Println(`Go's fake user and file CLI program`)
@@ -28,10 +43,11 @@ Commonds:
   exit 
   `)
 
+	re := regexp.MustCompile(`(?i)‘(.*?)’|([\S]+)`)
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Print("\n# ") // Prompt
+		fmt.Print("\n\n# ") // Prompt
 
 		scanner.Scan()
 		text := scanner.Text()
@@ -40,11 +56,18 @@ Commonds:
 			break
 		}
 
-		fields := strings.Fields(text)
+		fields := []string{}
+
+		for _, match := range re.FindAllStringSubmatch(text, -1) {
+			s := match[0]
+			s = strings.ReplaceAll(s, "‘", "")
+			s = strings.ReplaceAll(s, "’", "")
+			fields = append(fields, s)
+		}
+
 		if len(fields) < 2 {
 			fmt.Println(text)
 		} else {
-			fmt.Println(fields)
 			mapCommandFunction(fields[0], fields[1:])
 		}
 
@@ -80,10 +103,14 @@ func mapCommandFunction(commnd string, args []string) {
 
 func register(args []string) {
 	userName := args[0]
-	if userMap[userName] == 0 {
-		rand.Seed(time.Now().UnixNano())
-		userId := rand.Intn(MAX_USER_NUMBER) + 1
-		userMap[userName] = userId
+	_, ok := userMap[userName]
+	if !ok {
+		USER_ID_BASE += 1
+		userMap[userName] = User{
+			id:        fmt.Sprint(USER_ID_BASE),
+			name:      userName,
+			folderIds: []string{},
+		}
 
 		fmt.Printf("Success")
 	} else {
@@ -92,7 +119,30 @@ func register(args []string) {
 }
 
 func create_folder(args []string) {
+	if len(args) != 3 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
 
+	userName, folderName, description := args[0], args[1], args[2]
+	user, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	FOLDER_ID_BASE += 1
+	folderId := fmt.Sprint(FOLDER_ID_BASE)
+	folderMap[folderId] = Folder{
+		id:          folderId,
+		name:        folderName,
+		description: description,
+		createdAt:   time.Now().Format("2006-01-02 15:04:05"),
+	}
+
+	user.folderIds = append(user.folderIds, folderId)
+
+	fmt.Println(folderId)
 }
 
 func delete_folder(args []string) {
