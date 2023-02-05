@@ -196,6 +196,19 @@ func get_folders(args []string) {
 		fmt.Println("Error - unknown user")
 		return
 	}
+
+	folders := []Folder{}
+	folderIds := []string{}
+	for k := range user.folderIdMap {
+		folders = append(folders, folderMap[k])
+		folderIds = append(folderIds, k)
+	}
+
+	if len(folderIds) == 0 {
+		fmt.Println("Warning - empty folders")
+		return
+	}
+
 	orderField := SORT_NAME
 	if len(args) > 1 {
 		orderField = args[1]
@@ -204,12 +217,6 @@ func get_folders(args []string) {
 	if len(args) > 2 {
 		order = args[2]
 	}
-
-	folders := []Folder{}
-	for k, _ := range user.folderIdMap {
-		folders = append(folders, folderMap[k])
-	}
-
 	if orderField == SORT_NAME && ASC_SORT == order {
 		sort.Slice(folders, func(i, j int) bool {
 			return folders[i].name < folders[j].name
