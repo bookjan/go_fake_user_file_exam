@@ -49,7 +49,7 @@ Commonds:
   exit 
   `)
 
-	re := regexp.MustCompile(`(?i)‘(.*?)’|([\S]+)`)
+	re := regexp.MustCompile(`(?i)‘(.*?)’|'(.*?)'|([\S]+)`)
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -70,6 +70,8 @@ Commonds:
 			s := match[0]
 			s = strings.ReplaceAll(s, "‘", "")
 			s = strings.ReplaceAll(s, "’", "")
+			s = strings.ReplaceAll(s, "'", "")
+			s = strings.ReplaceAll(s, "'", "")
 			fields = append(fields, s)
 		}
 
