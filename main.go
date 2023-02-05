@@ -266,7 +266,6 @@ func rename_folders(args []string) {
 	}
 
 	folderMap[folderId].name = newFolderName
-	fmt.Println(folderMap[folderId])
 	fmt.Println("Success")
 }
 
