@@ -1,6 +1,6 @@
 .PHONY: buildandrun
 BIN_FILE=run.out
 
-buildandrun:
+build:
 		@go build -o "${BIN_FILE}" main.go
-		./"${BIN_FILE}"
+		
