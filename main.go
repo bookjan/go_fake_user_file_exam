@@ -20,12 +20,19 @@ type User struct {
 	name        string
 	folderIdMap map[string]bool
 }
+type File struct {
+	name        string
+	extension   string
+	description string
+	createdAt   time.Time
+}
 
 type Folder struct {
 	id          string
 	name        string
 	description string
 	createdAt   time.Time
+	fileMap     map[string]*File
 }
 
 var USER_ID_BASE int = 0
@@ -148,6 +155,7 @@ func create_folder(args []string) {
 		name:        folderName,
 		description: description,
 		createdAt:   time.Now(),
+		fileMap:     make(map[string]*File),
 	}
 
 	user.folderIdMap[folderId] = true
@@ -270,7 +278,37 @@ func rename_folders(args []string) {
 }
 
 func upload_file(args []string) {
+	if len(args) < 4 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
 
+	userName, folderId, fileName, description := args[0], args[1], args[2], args[3]
+	_, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	folder, ok := folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder_id not found")
+		return
+	}
+
+	re := regexp.MustCompile(`^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))`)
+	match := re.FindStringSubmatch(fileName)
+
+	name := match[2]
+	extension := strings.ReplaceAll(match[3], ".", "")
+	folder.fileMap[fileName] = &File{
+		name:        name,
+		extension:   extension,
+		description: description,
+		createdAt:   time.Now(),
+	}
+
+	fmt.Println("Success")
 }
 
 func delete_file(args []string) {

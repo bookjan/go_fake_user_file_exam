@@ -13,5 +13,6 @@ get_folders user1 sort_time asc
 get_folders user1 sort_time desc
 rename_folders user1 1001 Jello
 get_folders user1
+upload_file user1 1002 '1.tc' 'first test case for a company'
 exit
 EOF
