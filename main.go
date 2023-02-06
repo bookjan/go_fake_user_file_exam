@@ -192,7 +192,7 @@ func delete_folder(args []string) {
 	delete(folderMap, folderId)
 	delete(user.folderIdMap, folderId)
 
-	fmt.Println(folderId)
+	fmt.Println("Success")
 }
 
 func get_folders(args []string) {
