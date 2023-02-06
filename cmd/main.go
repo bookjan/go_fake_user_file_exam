@@ -85,7 +85,7 @@ func mapCommandFunction(commnd string, args []string) {
 	case "delete_folder":
 		handlers.DeleteFolder(args, userMap, folderMap)
 	case "get_folders":
-		handlers.GetFolders(args, userMap, folderMap)
+		handlers.GetFolders(args, userMap, folderMap, labelMap)
 	case "rename_folder":
 		handlers.RenameFolder(args, userMap, folderMap)
 	case "add_folder_label":

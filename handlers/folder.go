@@ -68,7 +68,7 @@ func DeleteFolder(args []string, userMap map[string]config.User, folderMap map[s
 	fmt.Println("Success")
 }
 
-func GetFolders(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
+func GetFolders(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder, labelMap map[string]*config.Label) {
 	if len(args) < 1 {
 		fmt.Println("Error - invalid arguments")
 		return
@@ -93,13 +93,26 @@ func GetFolders(args []string, userMap map[string]config.User, folderMap map[str
 		return
 	}
 
+	labelName := ""
+	index := 0
+	if len(args) == 4 { // with label_name
+		index++
+		labelName = args[1]
+	}
+
+	_, ok = labelMap[labelName]
+	if labelName != "" && !ok {
+		fmt.Println("Error - the label is not exists")
+		return
+	}
+
 	orderField := config.SORT_NAME
-	if len(args) > 1 {
-		orderField = args[1]
+	if len(args) > 1+index {
+		orderField = args[1+index]
 	}
 	order := config.ASC_SORT
-	if len(args) > 2 {
-		order = args[2]
+	if len(args) > 2+index {
+		order = args[2+index]
 	}
 
 	if orderField == config.SORT_NAME && config.ASC_SORT == order {
@@ -125,7 +138,11 @@ func GetFolders(args []string, userMap map[string]config.User, folderMap map[str
 	}
 
 	for _, v := range folders {
-		fmt.Printf("%v|%v|%v|%v|%v\n", v.Id, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
+		if labelName != "" {
+			fmt.Printf("%v|%v|%v|%v|%v|%v\n", v.Id, labelName, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
+		} else {
+			fmt.Printf("%v|%v|%v|%v|%v\n", v.Id, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
+		}
 	}
 }
 
