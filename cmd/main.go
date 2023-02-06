@@ -90,6 +90,8 @@ func mapCommandFunction(commnd string, args []string) {
 		handlers.RenameFolder(args, userMap, folderMap)
 	case "add_folder_label":
 		handlers.AddFolderLabel(args, userMap, folderMap, labelMap)
+	case "delete_folder_label":
+		handlers.AddFolderLabel(args, userMap, folderMap, labelMap)
 
 	case "upload_file":
 		handlers.UploadFile(args, userMap, folderMap)

@@ -182,3 +182,27 @@ func AddFolderLabel(args []string, userMap map[string]config.User, folderMap map
 
 	fmt.Println("Success")
 }
+
+func DeleteFolderLabel(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder, labelMap map[string]*config.Label) {
+	if len(args) < 3 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
+
+	userName, folderId, labelName := args[0], args[1], args[2]
+	_, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	folder, ok := folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder not exist")
+		return
+	}
+
+	delete(folder.LabelNameMap, labelName)
+
+	fmt.Println("Success")
+}
