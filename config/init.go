@@ -11,11 +11,17 @@ const DESC_SORT = "desc"
 var USER_ID_BASE int = 0
 var FOLDER_ID_BASE int = 1000
 
+type Label struct {
+	Name      string
+	Color     string
+	CreatedAt time.Time
+}
+
 type User struct {
 	Id          string
 	Name        string
 	FolderIdMap map[string]bool
-	LabelMap    map[string]string
+	LabelMap    map[string]*Label
 }
 
 type File struct {

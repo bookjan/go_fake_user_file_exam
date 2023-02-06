@@ -74,6 +74,8 @@ func mapCommandFunction(commnd string, args []string) {
 		handlers.Register(args, userMap)
 	case "add_label":
 		handlers.AddLabel(args, userMap)
+	case "get_labels":
+		handlers.GetLabel(args, userMap)
 	case "create_folder":
 		handlers.CreateFolder(args, userMap, folderMap)
 	case "delete_folder":
