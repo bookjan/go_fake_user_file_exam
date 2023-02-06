@@ -14,3 +14,13 @@ delete_file user1 1002 1.png
 delete_file user1 1001 1.tc
 exit
 EOF
+
+
+./run.out - << EOF
+register user1
+create_folder user1 ‘For Work’ ‘Work folder description’
+add_label user1 ‘Work’ ‘blue’
+get_labels user1
+delete_label user1 ‘Temp’
+exit
+EOF

@@ -18,10 +18,10 @@ type Label struct {
 }
 
 type User struct {
-	Id          string
-	Name        string
-	FolderIdMap map[string]bool
-	LabelMap    map[string]*Label
+	Id           string
+	Name         string
+	FolderIdMap  map[string]bool
+	LabelNameMap map[string]bool
 }
 
 type File struct {

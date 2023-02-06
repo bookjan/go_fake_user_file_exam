@@ -13,6 +13,7 @@ import (
 
 var userMap = make(map[string]config.User)
 var folderMap = make(map[string]*config.Folder)
+var labelMap = make(map[string]*config.Label)
 
 func Execute() {
 	fmt.Println(`Go's fake user and file CLI program`)
@@ -73,9 +74,11 @@ func mapCommandFunction(commnd string, args []string) {
 	case "register":
 		handlers.Register(args, userMap)
 	case "add_label":
-		handlers.AddLabel(args, userMap)
+		handlers.AddLabel(args, userMap, labelMap)
 	case "get_labels":
-		handlers.GetLabel(args, userMap)
+		handlers.GetLabel(args, userMap, labelMap)
+	case "delete_label":
+		handlers.DeleteLabel(args, userMap, labelMap)
 	case "create_folder":
 		handlers.CreateFolder(args, userMap, folderMap)
 	case "delete_folder":
