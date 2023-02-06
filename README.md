@@ -4,10 +4,16 @@ The program implemented by Go.
 ## Prerequisites
 Before you running the program. Please make sure you have the Go environment first. Please refer to [Download and install](https://go.dev/doc/install).
 
-## Usage
+## Build
 ```shell
 cd {project_folder}
 make
+```
+
+## Run
+```shell
+cd {project_folder}
+./run.sh
 ```
 
 ## Notes
