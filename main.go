@@ -312,7 +312,33 @@ func upload_file(args []string) {
 }
 
 func delete_file(args []string) {
+	if len(args) < 3 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
 
+	userName, folderId, fileName := args[0], args[1], args[2]
+	_, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	folder, ok := folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder_id not found")
+		return
+	}
+
+	_, ok = folder.fileMap[fileName]
+	if !ok {
+		fmt.Println("Error - file_name not found")
+		return
+	}
+
+	delete(folder.fileMap, fileName)
+
+	fmt.Println("Success")
 }
 
 func get_files(args []string) {
