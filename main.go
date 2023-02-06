@@ -12,6 +12,7 @@ import (
 
 const SORT_NAME = "sort_name"
 const SORT_TIME = "sort_time"
+const SORT_EXTENSION = "sort_extension"
 const ASC_SORT = "asc"
 const DESC_SORT = "desc"
 
@@ -227,6 +228,7 @@ func get_folders(args []string) {
 	if len(args) > 2 {
 		order = args[2]
 	}
+
 	if orderField == SORT_NAME && ASC_SORT == order {
 		sort.Slice(folders, func(i, j int) bool {
 			return folders[i].name < folders[j].name
@@ -237,6 +239,7 @@ func get_folders(args []string) {
 			return folders[i].name > folders[j].name
 		})
 	}
+
 	if orderField == SORT_TIME && ASC_SORT == order {
 		sort.Slice(folders, func(i, j int) bool {
 			return folders[i].createdAt.Before(folders[j].createdAt)
@@ -251,7 +254,6 @@ func get_folders(args []string) {
 	for _, v := range folders {
 		fmt.Printf("%v|%v|%v|%v|%v\n", v.id, v.name, v.description, v.createdAt.Format("2006-01-02 15:04:05.0000"), userName)
 	}
-
 }
 
 func rename_folders(args []string) {
@@ -342,5 +344,78 @@ func delete_file(args []string) {
 }
 
 func get_files(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
 
+	userName, folderId := args[0], args[1]
+	user, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	_, ok = user.folderIdMap[folderId]
+	if !ok {
+		fmt.Println("folder_name not found")
+	}
+
+	files := []File{}
+	folder := folderMap[folderId]
+	for k := range folder.fileMap {
+		files = append(files, *folder.fileMap[k])
+	}
+
+	if len(files) == 0 {
+		fmt.Println("Warning - empty files")
+		return
+	}
+
+	orderField := SORT_NAME
+	if len(args) > 2 {
+		orderField = args[2]
+	}
+	order := ASC_SORT
+	if len(args) > 3 {
+		order = args[3]
+	}
+
+	if orderField == SORT_NAME && ASC_SORT == order {
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].name < files[j].name
+		})
+	}
+	if orderField == SORT_NAME && DESC_SORT == order {
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].name > files[j].name
+		})
+	}
+
+	if orderField == SORT_TIME && ASC_SORT == order {
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].createdAt.Before(files[j].createdAt)
+		})
+	}
+	if orderField == SORT_TIME && DESC_SORT == order {
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].createdAt.After(files[j].createdAt)
+		})
+	}
+
+	if orderField == SORT_EXTENSION && ASC_SORT == order {
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].extension < files[j].extension
+		})
+	}
+	if orderField == SORT_EXTENSION && DESC_SORT == order {
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].extension < files[j].extension
+		})
+	}
+
+	for _, v := range files {
+		fullFileName := v.name + "." + v.extension
+		fmt.Printf("%v|%v|%v|%v|%v\n", fullFileName, v.extension, v.description, v.createdAt.Format("2006-01-02 15:04:05.0000"), userName)
+	}
 }
