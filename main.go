@@ -252,7 +252,7 @@ func get_folders(args []string) {
 	}
 
 	for _, v := range folders {
-		fmt.Printf("%v|%v|%v|%v|%v\n", v.id, v.name, v.description, v.createdAt.Format("2006-01-02 15:04:05.0000"), userName)
+		fmt.Printf("%v|%v|%v|%v|%v\n", v.id, v.name, v.description, v.createdAt.Format("2006-01-02 15:04:05"), userName)
 	}
 }
 
@@ -416,6 +416,6 @@ func get_files(args []string) {
 
 	for _, v := range files {
 		fullFileName := v.name + "." + v.extension
-		fmt.Printf("%v|%v|%v|%v|%v\n", fullFileName, v.extension, v.description, v.createdAt.Format("2006-01-02 15:04:05.0000"), userName)
+		fmt.Printf("%v|%v|%v|%v|%v\n", fullFileName, v.extension, v.description, v.createdAt.Format("2006-01-02 15:04:05"), userName)
 	}
 }
