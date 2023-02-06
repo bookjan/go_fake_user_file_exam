@@ -72,6 +72,8 @@ func mapCommandFunction(commnd string, args []string) {
 	switch commnd {
 	case "register":
 		handlers.Register(args, userMap)
+	case "add_label":
+		handlers.AddLabel(args, userMap)
 	case "create_folder":
 		handlers.CreateFolder(args, userMap, folderMap)
 	case "delete_folder":

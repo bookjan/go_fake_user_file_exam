@@ -15,6 +15,7 @@ type User struct {
 	Id          string
 	Name        string
 	FolderIdMap map[string]bool
+	LabelMap    map[string]string
 }
 
 type File struct {
