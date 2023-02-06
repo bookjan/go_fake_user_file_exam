@@ -50,7 +50,7 @@ Commonds:
   create_folder  {username} {folder_name} {description}
   delete_folder  {username} {folder_id}
   get_folders    {username} {sort_name | sort_time} {asc|dsc}
-  rename_folders {username} {folder_id} {new_folder_name}
+  rename_folder {username} {folder_id} {new_folder_name}
   upload_file    {username} {folder_id} {file_name} {description}
   delete_file    {username} {folder_id} {file_name}
   get_files      {username} {folder_id} {sort_name|sort_time|sort_extension} {asc|dsc}
@@ -106,8 +106,8 @@ func mapCommandFunction(commnd string, args []string) {
 		delete_folder(args)
 	case "get_folders":
 		get_folders(args)
-	case "rename_folders":
-		rename_folders(args)
+	case "rename_folder":
+		rename_folder(args)
 	case "upload_file":
 		upload_file(args)
 	case "delete_file":
@@ -256,7 +256,7 @@ func get_folders(args []string) {
 	}
 }
 
-func rename_folders(args []string) {
+func rename_folder(args []string) {
 	if len(args) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
