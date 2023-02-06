@@ -185,13 +185,13 @@ func AddFolderLabel(args []string, userMap map[string]config.User, folderMap map
 
 	_, ok = labelMap[labelName]
 	if !ok {
-		fmt.Println("Error - the label name not exist")
+		fmt.Println("Error - the label name not exists")
 		return
 	}
 
 	folder, ok := folderMap[folderId]
 	if !ok {
-		fmt.Println("Error - folder not exist")
+		fmt.Println("Error - folder not exists")
 		return
 	}
 
@@ -215,7 +215,7 @@ func DeleteFolderLabel(args []string, userMap map[string]config.User, folderMap 
 
 	folder, ok := folderMap[folderId]
 	if !ok {
-		fmt.Println("Error - folder not exist")
+		fmt.Println("Error - folder not exists")
 		return
 	}
 

@@ -88,7 +88,7 @@ func DeleteLabel(args []string, userMap map[string]config.User, labelMap map[str
 
 	_, ok = labelMap[labelName]
 	if !ok {
-		fmt.Println("Error - the label name not exist")
+		fmt.Println("Error - the label name not exists")
 		return
 	}
 
