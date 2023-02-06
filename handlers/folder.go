@@ -1,0 +1,152 @@
+package handlers
+
+import (
+	"fmt"
+	"sort"
+	"time"
+
+	"go_fake_user_file_exam/config"
+)
+
+func CreateFolder(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
+	if len(args) < 3 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
+
+	userName, folderName, description := args[0], args[1], args[2]
+	user, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	config.FOLDER_ID_BASE += 1
+	folderId := fmt.Sprint(config.FOLDER_ID_BASE)
+	folderMap[folderId] = &config.Folder{
+		Id:          folderId,
+		Name:        folderName,
+		Description: description,
+		CreatedAt:   time.Now(),
+		FileMap:     make(map[string]*config.File),
+	}
+
+	user.FolderIdMap[folderId] = true
+
+	fmt.Println(folderId)
+}
+
+func DeleteFolder(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
+	if len(args) < 2 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
+
+	userName, folderId := args[0], args[1]
+	user, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	_, ok = folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder doesn’t exist")
+		return
+	}
+
+	_, ok = user.FolderIdMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder owner not match")
+		return
+	}
+
+	delete(folderMap, folderId)
+	delete(user.FolderIdMap, folderId)
+
+	fmt.Println("Success")
+}
+
+func GetFolders(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
+	if len(args) < 1 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
+
+	userName := args[0]
+	user, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	folders := []config.Folder{}
+	folderIds := []string{}
+	for k := range user.FolderIdMap {
+		folders = append(folders, *folderMap[k])
+		folderIds = append(folderIds, k)
+	}
+
+	if len(folderIds) == 0 {
+		fmt.Println("Warning - empty folders")
+		return
+	}
+
+	orderField := config.SORT_NAME
+	if len(args) > 1 {
+		orderField = args[1]
+	}
+	order := config.ASC_SORT
+	if len(args) > 2 {
+		order = args[2]
+	}
+
+	if orderField == config.SORT_NAME && config.ASC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].Name < folders[j].Name
+		})
+	}
+	if orderField == config.SORT_NAME && config.DESC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].Name > folders[j].Name
+		})
+	}
+
+	if orderField == config.SORT_TIME && config.ASC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].CreatedAt.Before(folders[j].CreatedAt)
+		})
+	}
+	if orderField == config.SORT_TIME && config.DESC_SORT == order {
+		sort.Slice(folders, func(i, j int) bool {
+			return folders[i].CreatedAt.After(folders[j].CreatedAt)
+		})
+	}
+
+	for _, v := range folders {
+		fmt.Printf("%v|%v|%v|%v|%v\n", v.Id, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
+	}
+}
+
+func RenameFolder(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
+	if len(args) < 3 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
+
+	userName, folderId, newFolderName := args[0], args[1], args[2]
+	_, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	_, ok = folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder_id not found")
+		return
+	}
+
+	folderMap[folderId].Name = newFolderName
+	fmt.Println("Success")
+}
