@@ -22,5 +22,6 @@ create_folder user1 ‘For Work’ ‘Work folder description’
 add_label user1 ‘Work’ ‘blue’
 get_labels user1
 delete_label user1 ‘Temp’
+add_folder_label user1 1001 ‘Work
 exit
 EOF

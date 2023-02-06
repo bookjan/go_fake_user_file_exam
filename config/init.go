@@ -32,9 +32,10 @@ type File struct {
 }
 
 type Folder struct {
-	Id          string
-	Name        string
-	Description string
-	CreatedAt   time.Time
-	FileMap     map[string]*File
+	Id           string
+	Name         string
+	Description  string
+	CreatedAt    time.Time
+	FileMap      map[string]*File
+	LabelNameMap map[string]bool
 }

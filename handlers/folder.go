@@ -24,11 +24,12 @@ func CreateFolder(args []string, userMap map[string]config.User, folderMap map[s
 	config.FOLDER_ID_BASE += 1
 	folderId := fmt.Sprint(config.FOLDER_ID_BASE)
 	folderMap[folderId] = &config.Folder{
-		Id:          folderId,
-		Name:        folderName,
-		Description: description,
-		CreatedAt:   time.Now(),
-		FileMap:     make(map[string]*config.File),
+		Id:           folderId,
+		Name:         folderName,
+		Description:  description,
+		CreatedAt:    time.Now(),
+		FileMap:      make(map[string]*config.File),
+		LabelNameMap: make(map[string]bool),
 	}
 
 	user.FolderIdMap[folderId] = true
@@ -148,5 +149,36 @@ func RenameFolder(args []string, userMap map[string]config.User, folderMap map[s
 	}
 
 	folderMap[folderId].Name = newFolderName
+
+	fmt.Println("Success")
+}
+
+func AddFolderLabel(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder, labelMap map[string]*config.Label) {
+	if len(args) < 3 {
+		fmt.Println("Error - invalid arguments")
+		return
+	}
+
+	userName, folderId, labelName := args[0], args[1], args[2]
+	_, ok := userMap[userName]
+	if !ok {
+		fmt.Println("Error - unknown user")
+		return
+	}
+
+	_, ok = labelMap[labelName]
+	if !ok {
+		fmt.Println("Error - the label name not exist")
+		return
+	}
+
+	folder, ok := folderMap[folderId]
+	if !ok {
+		fmt.Println("Error - folder not exist")
+		return
+	}
+
+	folder.LabelNameMap[labelName] = true
+
 	fmt.Println("Success")
 }

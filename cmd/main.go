@@ -79,6 +79,7 @@ func mapCommandFunction(commnd string, args []string) {
 		handlers.GetLabel(args, userMap, labelMap)
 	case "delete_label":
 		handlers.DeleteLabel(args, userMap, labelMap)
+
 	case "create_folder":
 		handlers.CreateFolder(args, userMap, folderMap)
 	case "delete_folder":
@@ -87,6 +88,9 @@ func mapCommandFunction(commnd string, args []string) {
 		handlers.GetFolders(args, userMap, folderMap)
 	case "rename_folder":
 		handlers.RenameFolder(args, userMap, folderMap)
+	case "add_folder_label":
+		handlers.AddFolderLabel(args, userMap, folderMap, labelMap)
+
 	case "upload_file":
 		handlers.UploadFile(args, userMap, folderMap)
 	case "delete_file":
