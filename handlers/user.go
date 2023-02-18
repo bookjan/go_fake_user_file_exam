@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"go_fake_user_file_exam/config"
+	"go_fake_user_file_exam/util"
 )
 
 func Register(args *config.Arguments) {
@@ -19,15 +20,15 @@ func Register(args *config.Arguments) {
 			LabelNameMap: map[string]bool{},
 		}
 
-		fmt.Printf("Success")
+		util.PrintOrLog("Success", util.Trace)
 	} else {
-		fmt.Printf("Error - user already existing")
+		util.PrintOrLog("user already existing", util.Error)
 	}
 }
 
 func AddLabel(args *config.Arguments) {
 	if len(args.Options) < 3 {
-		fmt.Println("Error - invalid arguments")
+		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
@@ -35,13 +36,13 @@ func AddLabel(args *config.Arguments) {
 	userName, labelName, color := options[0], options[1], options[2]
 	user, ok := args.UserMap[userName]
 	if !ok {
-		fmt.Println("Error - unknown user")
+		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
 	_, ok = args.LabelMap[labelName]
 	if ok {
-		fmt.Println("Error - the label name existing")
+		util.PrintOrLog("the label name existing", util.Error)
 		return
 	}
 
@@ -52,19 +53,19 @@ func AddLabel(args *config.Arguments) {
 		CreatedAt: time.Now(),
 	}
 
-	fmt.Println("Success")
+	util.PrintOrLog("Success", util.Trace)
 }
 
 func GetLabel(args *config.Arguments) {
 	if len(args.Options) < 1 {
-		fmt.Println("Error - invalid arguments")
+		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
 	userName := args.Options[0]
 	user, ok := args.UserMap[userName]
 	if !ok {
-		fmt.Println("Error - unknown user")
+		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
@@ -76,7 +77,7 @@ func GetLabel(args *config.Arguments) {
 
 func DeleteLabel(args *config.Arguments) {
 	if len(args.Options) < 2 {
-		fmt.Println("Error - invalid arguments")
+		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
@@ -84,23 +85,23 @@ func DeleteLabel(args *config.Arguments) {
 	userName, labelName := options[0], options[1]
 	user, ok := args.UserMap[userName]
 	if !ok {
-		fmt.Println("Error - unknown user")
+		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
 	_, ok = args.LabelMap[labelName]
 	if !ok {
-		fmt.Println("Error - the label name not exists")
+		util.PrintOrLog("the label name not exists", util.Error)
 		return
 	}
 
 	_, ok = user.LabelNameMap[labelName]
 	if !ok {
-		fmt.Println("Error - owner mismatch")
+		util.PrintOrLog("owner mismatch", util.Error)
 		return
 	}
 
 	delete(user.LabelNameMap, labelName)
 
-	fmt.Println("Success")
+	util.PrintOrLog("Success", util.Trace)
 }

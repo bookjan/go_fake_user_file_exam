@@ -9,6 +9,7 @@ import (
 
 	"go_fake_user_file_exam/config"
 	"go_fake_user_file_exam/handlers"
+	"go_fake_user_file_exam/util"
 )
 
 func Execute() {
@@ -69,7 +70,7 @@ Commonds:
 	}
 
 	if scanner.Err() != nil {
-		fmt.Println("Error: ", scanner.Err())
+		util.PrintOrLog(scanner.Err().Error(), util.Error)
 	}
 }
 

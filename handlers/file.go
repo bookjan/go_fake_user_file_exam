@@ -8,11 +8,12 @@ import (
 	"time"
 
 	"go_fake_user_file_exam/config"
+	"go_fake_user_file_exam/util"
 )
 
 func UploadFile(args *config.Arguments) {
 	if len(args.Options) < 4 {
-		fmt.Println("Error - invalid arguments")
+		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
@@ -20,13 +21,13 @@ func UploadFile(args *config.Arguments) {
 	userName, folderId, fileName, description := options[0], options[1], options[2], options[3]
 	_, ok := args.UserMap[userName]
 	if !ok {
-		fmt.Println("Error - unknown user")
+		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
 	folder, ok := args.FolderMap[folderId]
 	if !ok {
-		fmt.Println("Error - folder_id not found")
+		util.PrintOrLog("folder_id not found", util.Error)
 		return
 	}
 
@@ -42,12 +43,12 @@ func UploadFile(args *config.Arguments) {
 		CreatedAt:   time.Now(),
 	}
 
-	fmt.Println("Success")
+	util.PrintOrLog("Success", util.Trace)
 }
 
 func DeleteFile(args *config.Arguments) {
 	if len(args.Options) < 3 {
-		fmt.Println("Error - invalid arguments")
+		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
@@ -55,30 +56,30 @@ func DeleteFile(args *config.Arguments) {
 	userName, folderId, fileName := options[0], options[1], options[2]
 	_, ok := args.UserMap[userName]
 	if !ok {
-		fmt.Println("Error - unknown user")
+		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
 	folder, ok := args.FolderMap[folderId]
 	if !ok {
-		fmt.Println("Error - folder_id not found")
+		util.PrintOrLog("folder_id not found", util.Error)
 		return
 	}
 
 	_, ok = folder.FileMap[fileName]
 	if !ok {
-		fmt.Println("Error - file_name not found")
+		util.PrintOrLog("file_name not found", util.Error)
 		return
 	}
 
 	delete(folder.FileMap, fileName)
 
-	fmt.Println("Success")
+	util.PrintOrLog("Success", util.Trace)
 }
 
 func GetFiles(args *config.Arguments) {
 	if len(args.Options) < 2 {
-		fmt.Println("Error - invalid arguments")
+		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
@@ -86,13 +87,13 @@ func GetFiles(args *config.Arguments) {
 	userName, folderId := options[0], options[1]
 	user, ok := args.UserMap[userName]
 	if !ok {
-		fmt.Println("Error - unknown user")
+		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
 	_, ok = user.FolderIdMap[folderId]
 	if !ok {
-		fmt.Println("folder_name not found")
+		util.PrintOrLog("folder_name not found", util.Error)
 	}
 
 	files := []*config.File{}
@@ -102,7 +103,7 @@ func GetFiles(args *config.Arguments) {
 	}
 
 	if len(files) == 0 {
-		fmt.Println("Warning - empty files")
+		util.PrintOrLog("empty files", util.Warn)
 		return
 	}
 
