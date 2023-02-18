@@ -42,7 +42,64 @@ type Folder struct {
 	LabelNameMap map[string]bool
 }
 
-type UserMap map[string]User
+type SortFolderByName []*Folder
+type SortFolderByTime []*Folder
+
+func (x SortFolderByName) Len() int {
+	return len(x)
+}
+func (x SortFolderByName) Less(i, j int) bool {
+	return x[i].Name < x[j].Name
+}
+func (x SortFolderByName) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+func (x SortFolderByTime) Len() int {
+	return len(x)
+}
+func (x SortFolderByTime) Less(i, j int) bool {
+	return x[i].CreatedAt.Before(x[j].CreatedAt)
+}
+func (x SortFolderByTime) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+type SortFileByName []*File
+type SortFileByTime []*File
+type SortFileByExtension []*File
+
+func (x SortFileByName) Len() int {
+	return len(x)
+}
+func (x SortFileByName) Less(i, j int) bool {
+	return x[i].Name < x[j].Name
+}
+func (x SortFileByName) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+func (x SortFileByTime) Len() int {
+	return len(x)
+}
+func (x SortFileByTime) Less(i, j int) bool {
+	return x[i].CreatedAt.Before(x[j].CreatedAt)
+}
+func (x SortFileByTime) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+func (x SortFileByExtension) Len() int {
+	return len(x)
+}
+func (x SortFileByExtension) Less(i, j int) bool {
+	return x[i].Extension < x[j].Extension
+}
+func (x SortFileByExtension) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+type UserMap map[string]*User
 type FolderMap map[string]*Folder
 type LabelMap map[string]*Label
 

@@ -12,7 +12,7 @@ func Register(args *config.Arguments) {
 	_, ok := args.UserMap[userName]
 	if !ok {
 		config.USER_ID_BASE += 1
-		args.UserMap[userName] = config.User{
+		args.UserMap[userName] = &config.User{
 			Id:           fmt.Sprint(config.USER_ID_BASE),
 			Name:         userName,
 			FolderIdMap:  map[string]bool{},

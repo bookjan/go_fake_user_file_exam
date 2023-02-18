@@ -84,10 +84,10 @@ func GetFolders(args *config.Arguments) {
 		return
 	}
 
-	folders := []config.Folder{}
+	folders := []*config.Folder{}
 	folderIds := []string{}
 	for k := range user.FolderIdMap {
-		folders = append(folders, *args.FolderMap[k])
+		folders = append(folders, args.FolderMap[k])
 		folderIds = append(folderIds, k)
 	}
 
@@ -119,25 +119,17 @@ func GetFolders(args *config.Arguments) {
 	}
 
 	if orderField == config.SORT_NAME && config.ASC_SORT == order {
-		sort.Slice(folders, func(i, j int) bool {
-			return folders[i].Name < folders[j].Name
-		})
+		sort.Sort(config.SortFolderByName(folders))
 	}
 	if orderField == config.SORT_NAME && config.DESC_SORT == order {
-		sort.Slice(folders, func(i, j int) bool {
-			return folders[i].Name > folders[j].Name
-		})
+		sort.Sort(sort.Reverse(config.SortFolderByName(folders)))
 	}
 
 	if orderField == config.SORT_TIME && config.ASC_SORT == order {
-		sort.Slice(folders, func(i, j int) bool {
-			return folders[i].CreatedAt.Before(folders[j].CreatedAt)
-		})
+		sort.Sort(config.SortFolderByTime(folders))
 	}
 	if orderField == config.SORT_TIME && config.DESC_SORT == order {
-		sort.Slice(folders, func(i, j int) bool {
-			return folders[i].CreatedAt.After(folders[j].CreatedAt)
-		})
+		sort.Sort(sort.Reverse(config.SortFolderByTime(folders)))
 	}
 
 	for _, v := range folders {

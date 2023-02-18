@@ -95,10 +95,10 @@ func GetFiles(args *config.Arguments) {
 		fmt.Println("folder_name not found")
 	}
 
-	files := []config.File{}
+	files := []*config.File{}
 	folder := args.FolderMap[folderId]
 	for k := range folder.FileMap {
-		files = append(files, *folder.FileMap[k])
+		files = append(files, folder.FileMap[k])
 	}
 
 	if len(files) == 0 {
@@ -116,36 +116,24 @@ func GetFiles(args *config.Arguments) {
 	}
 
 	if orderField == config.SORT_NAME && config.ASC_SORT == order {
-		sort.Slice(files, func(i, j int) bool {
-			return files[i].Name < files[j].Name
-		})
+		sort.Sort(config.SortFileByTime(files))
 	}
 	if orderField == config.SORT_NAME && config.DESC_SORT == order {
-		sort.Slice(files, func(i, j int) bool {
-			return files[i].Name > files[j].Name
-		})
+		sort.Sort(sort.Reverse(config.SortFileByName(files)))
 	}
 
 	if orderField == config.SORT_TIME && config.ASC_SORT == order {
-		sort.Slice(files, func(i, j int) bool {
-			return files[i].CreatedAt.Before(files[j].CreatedAt)
-		})
+		sort.Sort(config.SortFileByTime(files))
 	}
 	if orderField == config.SORT_TIME && config.DESC_SORT == order {
-		sort.Slice(files, func(i, j int) bool {
-			return files[i].CreatedAt.After(files[j].CreatedAt)
-		})
+		sort.Sort(sort.Reverse(config.SortFileByTime(files)))
 	}
 
 	if orderField == config.SORT_EXTENSION && config.ASC_SORT == order {
-		sort.Slice(files, func(i, j int) bool {
-			return files[i].Extension < files[j].Extension
-		})
+		sort.Sort(config.SortFileByExtension(files))
 	}
 	if orderField == config.SORT_EXTENSION && config.DESC_SORT == order {
-		sort.Slice(files, func(i, j int) bool {
-			return files[i].Extension < files[j].Extension
-		})
+		sort.Sort(sort.Reverse(config.SortFileByExtension(files)))
 	}
 
 	for _, v := range files {
