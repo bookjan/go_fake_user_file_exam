@@ -1,21 +1,28 @@
-package handlers
+package cmd
 
 import (
 	"fmt"
 	"time"
 
-	"go_fake_user_file_exam/config"
 	"go_fake_user_file_exam/util"
 )
 
-func Register(args *config.Arguments) {
+type User struct {
+	Base
+	FolderIdMap  map[string]bool
+	LabelNameMap map[string]bool
+}
+
+func Register(args *Arguments) {
 	userName := args.Options[0]
 	_, ok := args.UserMap[userName]
 	if !ok {
-		config.USER_ID_BASE += 1
-		args.UserMap[userName] = &config.User{
-			Id:           fmt.Sprint(config.USER_ID_BASE),
-			Name:         userName,
+		USER_ID_BASE += 1
+		args.UserMap[userName] = &User{
+			Base: Base{
+				Id:   fmt.Sprint(USER_ID_BASE),
+				Name: userName,
+			},
 			FolderIdMap:  map[string]bool{},
 			LabelNameMap: map[string]bool{},
 		}
@@ -26,7 +33,7 @@ func Register(args *config.Arguments) {
 	}
 }
 
-func AddLabel(args *config.Arguments) {
+func AddLabel(args *Arguments) {
 	if len(args.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -47,16 +54,18 @@ func AddLabel(args *config.Arguments) {
 	}
 
 	user.LabelNameMap[labelName] = true
-	args.LabelMap[labelName] = &config.Label{
-		Name:      labelName,
-		Color:     color,
-		CreatedAt: time.Now(),
+	args.LabelMap[labelName] = &Label{
+		Base: Base{
+			Name:      labelName,
+			CreatedAt: time.Now(),
+		},
+		Color: color,
 	}
 
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func GetLabel(args *config.Arguments) {
+func GetLabel(args *Arguments) {
 	if len(args.Options) < 1 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -75,7 +84,7 @@ func GetLabel(args *config.Arguments) {
 	}
 }
 
-func DeleteLabel(args *config.Arguments) {
+func DeleteLabel(args *Arguments) {
 	if len(args.Options) < 2 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return

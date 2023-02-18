@@ -7,8 +7,6 @@ import (
 	"regexp"
 	"strings"
 
-	"go_fake_user_file_exam/config"
-	"go_fake_user_file_exam/handlers"
 	"go_fake_user_file_exam/util"
 )
 
@@ -27,10 +25,10 @@ Commonds:
   exit 
   `)
 
-	var args config.Arguments = config.Arguments{
-		UserMap:   make(config.UserMap),
-		FolderMap: make(config.FolderMap),
-		LabelMap:  make(config.LabelMap),
+	var args Arguments = Arguments{
+		UserMap:   make(UserMap),
+		FolderMap: make(FolderMap),
+		LabelMap:  make(LabelMap),
 	}
 
 	re := regexp.MustCompile(`(?i)‘(.*?)’|'(.*?)'|([\S]+)`)
@@ -74,36 +72,36 @@ Commonds:
 	}
 }
 
-func mapCommandFunction(args config.Arguments) {
+func mapCommandFunction(args Arguments) {
 	switch args.Command {
 	case "register":
-		handlers.Register(&args)
+		Register(&args)
 	case "add_label":
-		handlers.AddLabel(&args)
+		AddLabel(&args)
 	case "get_labels":
-		handlers.GetLabel(&args)
+		GetLabel(&args)
 	case "delete_label":
-		handlers.DeleteLabel(&args)
+		DeleteLabel(&args)
 
 	case "create_folder":
-		handlers.CreateFolder(&args)
+		CreateFolder(&args)
 	case "delete_folder":
-		handlers.DeleteFolder(&args)
+		DeleteFolder(&args)
 	case "get_folders":
-		handlers.GetFolders(&args)
+		GetFolders(&args)
 	case "rename_folder":
-		handlers.RenameFolder(&args)
+		RenameFolder(&args)
 	case "add_folder_label":
-		handlers.AddFolderLabel(&args)
+		AddFolderLabel(&args)
 	case "delete_folder_label":
-		handlers.AddFolderLabel(&args)
+		DeleteFolderLabel(&args)
 
 	case "upload_file":
-		handlers.UploadFile(&args)
+		UploadFile(&args)
 	case "delete_file":
-		handlers.DeleteFile(&args)
+		DeleteFile(&args)
 	case "get_files":
-		handlers.GetFiles(&args)
+		GetFiles(&args)
 	default:
 		fmt.Printf("No command called: %s", args.Command)
 	}

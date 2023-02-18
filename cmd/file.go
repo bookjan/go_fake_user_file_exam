@@ -1,4 +1,4 @@
-package handlers
+package cmd
 
 import (
 	"fmt"
@@ -7,11 +7,51 @@ import (
 	"strings"
 	"time"
 
-	"go_fake_user_file_exam/config"
 	"go_fake_user_file_exam/util"
 )
 
-func UploadFile(args *config.Arguments) {
+type File struct {
+	Base
+	Extension string
+}
+
+type SortFileByName []*File
+
+func (x SortFileByName) Len() int {
+	return len(x)
+}
+func (x SortFileByName) Less(i, j int) bool {
+	return x[i].Name < x[j].Name
+}
+func (x SortFileByName) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+type SortFileByTime []*File
+
+func (x SortFileByTime) Len() int {
+	return len(x)
+}
+func (x SortFileByTime) Less(i, j int) bool {
+	return x[i].CreatedAt.Before(x[j].CreatedAt)
+}
+func (x SortFileByTime) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+type SortFileByExtension []*File
+
+func (x SortFileByExtension) Len() int {
+	return len(x)
+}
+func (x SortFileByExtension) Less(i, j int) bool {
+	return x[i].Extension < x[j].Extension
+}
+func (x SortFileByExtension) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+func UploadFile(args *Arguments) {
 	if len(args.Options) < 4 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -36,17 +76,19 @@ func UploadFile(args *config.Arguments) {
 
 	Name := match[2]
 	Extension := strings.ReplaceAll(match[3], ".", "")
-	folder.FileMap[fileName] = &config.File{
-		Name:        Name,
-		Extension:   Extension,
-		Description: description,
-		CreatedAt:   time.Now(),
+	folder.FileMap[fileName] = &File{
+		Base: Base{
+			Name:        Name,
+			Description: description,
+			CreatedAt:   time.Now(),
+		},
+		Extension: Extension,
 	}
 
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func DeleteFile(args *config.Arguments) {
+func DeleteFile(args *Arguments) {
 	if len(args.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -77,7 +119,7 @@ func DeleteFile(args *config.Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func GetFiles(args *config.Arguments) {
+func GetFiles(args *Arguments) {
 	if len(args.Options) < 2 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -96,7 +138,7 @@ func GetFiles(args *config.Arguments) {
 		util.PrintOrLog("folder_name not found", util.Error)
 	}
 
-	files := []*config.File{}
+	files := []*File{}
 	folder := args.FolderMap[folderId]
 	for k := range folder.FileMap {
 		files = append(files, folder.FileMap[k])
@@ -107,34 +149,34 @@ func GetFiles(args *config.Arguments) {
 		return
 	}
 
-	orderField := config.SORT_NAME
+	orderField := SORT_NAME
 	if len(options) > 2 {
 		orderField = options[2]
 	}
-	order := config.ASC_SORT
+	order := ASC_SORT
 	if len(options) > 3 {
 		order = options[3]
 	}
 
-	if orderField == config.SORT_NAME && config.ASC_SORT == order {
-		sort.Sort(config.SortFileByTime(files))
+	if orderField == SORT_NAME && ASC_SORT == order {
+		sort.Sort(SortFileByTime(files))
 	}
-	if orderField == config.SORT_NAME && config.DESC_SORT == order {
-		sort.Sort(sort.Reverse(config.SortFileByName(files)))
-	}
-
-	if orderField == config.SORT_TIME && config.ASC_SORT == order {
-		sort.Sort(config.SortFileByTime(files))
-	}
-	if orderField == config.SORT_TIME && config.DESC_SORT == order {
-		sort.Sort(sort.Reverse(config.SortFileByTime(files)))
+	if orderField == SORT_NAME && DESC_SORT == order {
+		sort.Sort(sort.Reverse(SortFileByName(files)))
 	}
 
-	if orderField == config.SORT_EXTENSION && config.ASC_SORT == order {
-		sort.Sort(config.SortFileByExtension(files))
+	if orderField == SORT_TIME && ASC_SORT == order {
+		sort.Sort(SortFileByTime(files))
 	}
-	if orderField == config.SORT_EXTENSION && config.DESC_SORT == order {
-		sort.Sort(sort.Reverse(config.SortFileByExtension(files)))
+	if orderField == SORT_TIME && DESC_SORT == order {
+		sort.Sort(sort.Reverse(SortFileByTime(files)))
+	}
+
+	if orderField == SORT_EXTENSION && ASC_SORT == order {
+		sort.Sort(SortFileByExtension(files))
+	}
+	if orderField == SORT_EXTENSION && DESC_SORT == order {
+		sort.Sort(sort.Reverse(SortFileByExtension(files)))
 	}
 
 	for _, v := range files {

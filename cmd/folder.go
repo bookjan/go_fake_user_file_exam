@@ -1,15 +1,44 @@
-package handlers
+package cmd
 
 import (
 	"fmt"
 	"sort"
 	"time"
 
-	"go_fake_user_file_exam/config"
 	"go_fake_user_file_exam/util"
 )
 
-func CreateFolder(args *config.Arguments) {
+type Folder struct {
+	Base
+	FileMap      map[string]*File
+	LabelNameMap map[string]bool
+}
+
+type SortFolderByName []*Folder
+
+func (x SortFolderByName) Len() int {
+	return len(x)
+}
+func (x SortFolderByName) Less(i, j int) bool {
+	return x[i].Name < x[j].Name
+}
+func (x SortFolderByName) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+type SortFolderByTime []*Folder
+
+func (x SortFolderByTime) Len() int {
+	return len(x)
+}
+func (x SortFolderByTime) Less(i, j int) bool {
+	return x[i].CreatedAt.Before(x[j].CreatedAt)
+}
+func (x SortFolderByTime) Swap(i, j int) {
+	x[i], x[j] = x[j], x[i]
+}
+
+func CreateFolder(args *Arguments) {
 	if len(args.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -23,14 +52,16 @@ func CreateFolder(args *config.Arguments) {
 		return
 	}
 
-	config.FOLDER_ID_BASE += 1
-	folderId := fmt.Sprint(config.FOLDER_ID_BASE)
-	args.FolderMap[folderId] = &config.Folder{
-		Id:           folderId,
-		Name:         folderName,
-		Description:  description,
-		CreatedAt:    time.Now(),
-		FileMap:      make(map[string]*config.File),
+	FOLDER_ID_BASE += 1
+	folderId := fmt.Sprint(FOLDER_ID_BASE)
+	args.FolderMap[folderId] = &Folder{
+		Base: Base{
+			Id:          folderId,
+			Name:        folderName,
+			Description: description,
+			CreatedAt:   time.Now(),
+		},
+		FileMap:      make(map[string]*File),
 		LabelNameMap: make(map[string]bool),
 	}
 
@@ -39,7 +70,7 @@ func CreateFolder(args *config.Arguments) {
 	util.PrintOrLog(folderId, util.Trace)
 }
 
-func DeleteFolder(args *config.Arguments) {
+func DeleteFolder(args *Arguments) {
 	if len(args.Options) < 2 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -71,7 +102,7 @@ func DeleteFolder(args *config.Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func GetFolders(args *config.Arguments) {
+func GetFolders(args *Arguments) {
 	if len(args.Options) < 1 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -85,7 +116,7 @@ func GetFolders(args *config.Arguments) {
 		return
 	}
 
-	folders := []*config.Folder{}
+	folders := []*Folder{}
 	folderIds := []string{}
 	for k := range user.FolderIdMap {
 		folders = append(folders, args.FolderMap[k])
@@ -110,27 +141,27 @@ func GetFolders(args *config.Arguments) {
 		return
 	}
 
-	orderField := config.SORT_NAME
+	orderField := SORT_NAME
 	if len(options) > 1+index {
 		orderField = options[1+index]
 	}
-	order := config.ASC_SORT
+	order := ASC_SORT
 	if len(options) > 2+index {
 		order = options[2+index]
 	}
 
-	if orderField == config.SORT_NAME && config.ASC_SORT == order {
-		sort.Sort(config.SortFolderByName(folders))
+	if orderField == SORT_NAME && ASC_SORT == order {
+		sort.Sort(SortFolderByName(folders))
 	}
-	if orderField == config.SORT_NAME && config.DESC_SORT == order {
-		sort.Sort(sort.Reverse(config.SortFolderByName(folders)))
+	if orderField == SORT_NAME && DESC_SORT == order {
+		sort.Sort(sort.Reverse(SortFolderByName(folders)))
 	}
 
-	if orderField == config.SORT_TIME && config.ASC_SORT == order {
-		sort.Sort(config.SortFolderByTime(folders))
+	if orderField == SORT_TIME && ASC_SORT == order {
+		sort.Sort(SortFolderByTime(folders))
 	}
-	if orderField == config.SORT_TIME && config.DESC_SORT == order {
-		sort.Sort(sort.Reverse(config.SortFolderByTime(folders)))
+	if orderField == SORT_TIME && DESC_SORT == order {
+		sort.Sort(sort.Reverse(SortFolderByTime(folders)))
 	}
 
 	for _, v := range folders {
@@ -142,7 +173,7 @@ func GetFolders(args *config.Arguments) {
 	}
 }
 
-func RenameFolder(args *config.Arguments) {
+func RenameFolder(args *Arguments) {
 	if len(args.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -167,7 +198,7 @@ func RenameFolder(args *config.Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func AddFolderLabel(args *config.Arguments) {
+func AddFolderLabel(args *Arguments) {
 	if len(args.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
@@ -198,7 +229,7 @@ func AddFolderLabel(args *config.Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func DeleteFolderLabel(args *config.Arguments) {
+func DeleteFolderLabel(args *Arguments) {
 	if len(args.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
