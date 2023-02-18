@@ -1,6 +1,8 @@
 package config
 
-import "time"
+import (
+	"time"
+)
 
 const SORT_NAME = "sort_name"
 const SORT_TIME = "sort_time"
@@ -38,4 +40,16 @@ type Folder struct {
 	CreatedAt    time.Time
 	FileMap      map[string]*File
 	LabelNameMap map[string]bool
+}
+
+type UserMap map[string]User
+type FolderMap map[string]*Folder
+type LabelMap map[string]*Label
+
+type Arguments struct {
+	Command   string
+	Options   []string
+	UserMap   UserMap
+	FolderMap FolderMap
+	LabelMap  LabelMap
 }

@@ -8,14 +8,15 @@ import (
 	"go_fake_user_file_exam/config"
 )
 
-func CreateFolder(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
-	if len(args) < 3 {
+func CreateFolder(args *config.Arguments) {
+	if len(args.Options) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderName, description := args[0], args[1], args[2]
-	user, ok := userMap[userName]
+	options := args.Options
+	userName, folderName, description := options[0], options[1], options[2]
+	user, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
@@ -23,7 +24,7 @@ func CreateFolder(args []string, userMap map[string]config.User, folderMap map[s
 
 	config.FOLDER_ID_BASE += 1
 	folderId := fmt.Sprint(config.FOLDER_ID_BASE)
-	folderMap[folderId] = &config.Folder{
+	args.FolderMap[folderId] = &config.Folder{
 		Id:           folderId,
 		Name:         folderName,
 		Description:  description,
@@ -37,20 +38,21 @@ func CreateFolder(args []string, userMap map[string]config.User, folderMap map[s
 	fmt.Println(folderId)
 }
 
-func DeleteFolder(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
-	if len(args) < 2 {
+func DeleteFolder(args *config.Arguments) {
+	if len(args.Options) < 2 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderId := args[0], args[1]
-	user, ok := userMap[userName]
+	options := args.Options
+	userName, folderId := options[0], options[1]
+	user, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	_, ok = folderMap[folderId]
+	_, ok = args.FolderMap[folderId]
 	if !ok {
 		fmt.Println("Error - folder doesn’t exist")
 		return
@@ -62,20 +64,21 @@ func DeleteFolder(args []string, userMap map[string]config.User, folderMap map[s
 		return
 	}
 
-	delete(folderMap, folderId)
+	delete(args.FolderMap, folderId)
 	delete(user.FolderIdMap, folderId)
 
 	fmt.Println("Success")
 }
 
-func GetFolders(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder, labelMap map[string]*config.Label) {
-	if len(args) < 1 {
+func GetFolders(args *config.Arguments) {
+	if len(args.Options) < 1 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName := args[0]
-	user, ok := userMap[userName]
+	options := args.Options
+	userName := options[0]
+	user, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
@@ -84,7 +87,7 @@ func GetFolders(args []string, userMap map[string]config.User, folderMap map[str
 	folders := []config.Folder{}
 	folderIds := []string{}
 	for k := range user.FolderIdMap {
-		folders = append(folders, *folderMap[k])
+		folders = append(folders, *args.FolderMap[k])
 		folderIds = append(folderIds, k)
 	}
 
@@ -95,24 +98,24 @@ func GetFolders(args []string, userMap map[string]config.User, folderMap map[str
 
 	labelName := ""
 	index := 0
-	if len(args) == 4 { // with label_name
+	if len(options) == 4 { // with label_name
 		index++
-		labelName = args[1]
+		labelName = options[1]
 	}
 
-	_, ok = labelMap[labelName]
+	_, ok = args.LabelMap[labelName]
 	if labelName != "" && !ok {
 		fmt.Println("Error - the label is not exists")
 		return
 	}
 
 	orderField := config.SORT_NAME
-	if len(args) > 1+index {
-		orderField = args[1+index]
+	if len(options) > 1+index {
+		orderField = options[1+index]
 	}
 	order := config.ASC_SORT
-	if len(args) > 2+index {
-		order = args[2+index]
+	if len(options) > 2+index {
+		order = options[2+index]
 	}
 
 	if orderField == config.SORT_NAME && config.ASC_SORT == order {
@@ -146,50 +149,52 @@ func GetFolders(args []string, userMap map[string]config.User, folderMap map[str
 	}
 }
 
-func RenameFolder(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
-	if len(args) < 3 {
+func RenameFolder(args *config.Arguments) {
+	if len(args.Options) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderId, newFolderName := args[0], args[1], args[2]
-	_, ok := userMap[userName]
+	options := args.Options
+	userName, folderId, newFolderName := options[0], options[1], options[2]
+	_, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	_, ok = folderMap[folderId]
+	_, ok = args.FolderMap[folderId]
 	if !ok {
 		fmt.Println("Error - folder_id not found")
 		return
 	}
 
-	folderMap[folderId].Name = newFolderName
+	args.FolderMap[folderId].Name = newFolderName
 
 	fmt.Println("Success")
 }
 
-func AddFolderLabel(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder, labelMap map[string]*config.Label) {
-	if len(args) < 3 {
+func AddFolderLabel(args *config.Arguments) {
+	if len(args.Options) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderId, labelName := args[0], args[1], args[2]
-	_, ok := userMap[userName]
+	options := args.Options
+	userName, folderId, labelName := options[0], options[1], options[2]
+	_, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	_, ok = labelMap[labelName]
+	_, ok = args.LabelMap[labelName]
 	if !ok {
 		fmt.Println("Error - the label name not exists")
 		return
 	}
 
-	folder, ok := folderMap[folderId]
+	folder, ok := args.FolderMap[folderId]
 	if !ok {
 		fmt.Println("Error - folder not exists")
 		return
@@ -200,20 +205,21 @@ func AddFolderLabel(args []string, userMap map[string]config.User, folderMap map
 	fmt.Println("Success")
 }
 
-func DeleteFolderLabel(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder, labelMap map[string]*config.Label) {
-	if len(args) < 3 {
+func DeleteFolderLabel(args *config.Arguments) {
+	if len(args.Options) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderId, labelName := args[0], args[1], args[2]
-	_, ok := userMap[userName]
+	options := args.Options
+	userName, folderId, labelName := options[0], options[1], options[2]
+	_, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	folder, ok := folderMap[folderId]
+	folder, ok := args.FolderMap[folderId]
 	if !ok {
 		fmt.Println("Error - folder not exists")
 		return

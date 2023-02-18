@@ -7,12 +7,12 @@ import (
 	"go_fake_user_file_exam/config"
 )
 
-func Register(args []string, userMap map[string]config.User) {
-	userName := args[0]
-	_, ok := userMap[userName]
+func Register(args *config.Arguments) {
+	userName := args.Options[0]
+	_, ok := args.UserMap[userName]
 	if !ok {
 		config.USER_ID_BASE += 1
-		userMap[userName] = config.User{
+		args.UserMap[userName] = config.User{
 			Id:           fmt.Sprint(config.USER_ID_BASE),
 			Name:         userName,
 			FolderIdMap:  map[string]bool{},
@@ -25,27 +25,28 @@ func Register(args []string, userMap map[string]config.User) {
 	}
 }
 
-func AddLabel(args []string, userMap map[string]config.User, labelMap map[string]*config.Label) {
-	if len(args) < 3 {
+func AddLabel(args *config.Arguments) {
+	if len(args.Options) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, labelName, color := args[0], args[1], args[2]
-	user, ok := userMap[userName]
+	options := args.Options
+	userName, labelName, color := options[0], options[1], options[2]
+	user, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	_, ok = labelMap[labelName]
+	_, ok = args.LabelMap[labelName]
 	if ok {
 		fmt.Println("Error - the label name existing")
 		return
 	}
 
 	user.LabelNameMap[labelName] = true
-	labelMap[labelName] = &config.Label{
+	args.LabelMap[labelName] = &config.Label{
 		Name:      labelName,
 		Color:     color,
 		CreatedAt: time.Now(),
@@ -54,39 +55,40 @@ func AddLabel(args []string, userMap map[string]config.User, labelMap map[string
 	fmt.Println("Success")
 }
 
-func GetLabel(args []string, userMap map[string]config.User, labelMap map[string]*config.Label) {
-	if len(args) < 1 {
+func GetLabel(args *config.Arguments) {
+	if len(args.Options) < 1 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName := args[0]
-	user, ok := userMap[userName]
+	userName := args.Options[0]
+	user, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
 	for k := range user.LabelNameMap {
-		v := labelMap[k]
+		v := args.LabelMap[k]
 		fmt.Printf("%v|%v|%v|%v", v.Name, v.Color, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
 	}
 }
 
-func DeleteLabel(args []string, userMap map[string]config.User, labelMap map[string]*config.Label) {
-	if len(args) < 2 {
+func DeleteLabel(args *config.Arguments) {
+	if len(args.Options) < 2 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, labelName := args[0], args[1]
-	user, ok := userMap[userName]
+	options := args.Options
+	userName, labelName := options[0], options[1]
+	user, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	_, ok = labelMap[labelName]
+	_, ok = args.LabelMap[labelName]
 	if !ok {
 		fmt.Println("Error - the label name not exists")
 		return

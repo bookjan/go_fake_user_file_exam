@@ -11,10 +11,6 @@ import (
 	"go_fake_user_file_exam/handlers"
 )
 
-var userMap = make(map[string]config.User)
-var folderMap = make(map[string]*config.Folder)
-var labelMap = make(map[string]*config.Label)
-
 func Execute() {
 	fmt.Println(`Go's fake user and file CLI program`)
 	fmt.Println(`
@@ -29,6 +25,12 @@ Commonds:
   get_files      {username} {folder_id} {sort_name|sort_time|sort_extension} {asc|dsc}
   exit 
   `)
+
+	var args config.Arguments = config.Arguments{
+		UserMap:   make(config.UserMap),
+		FolderMap: make(config.FolderMap),
+		LabelMap:  make(config.LabelMap),
+	}
 
 	re := regexp.MustCompile(`(?i)‘(.*?)’|'(.*?)'|([\S]+)`)
 	scanner := bufio.NewScanner(os.Stdin)
@@ -59,7 +61,9 @@ Commonds:
 		if len(fields) < 2 {
 			fmt.Println(text)
 		} else {
-			mapCommandFunction(fields[0], fields[1:])
+			args.Command = fields[0]
+			args.Options = fields[1:]
+			mapCommandFunction(args)
 		}
 
 	}
@@ -69,37 +73,37 @@ Commonds:
 	}
 }
 
-func mapCommandFunction(commnd string, args []string) {
-	switch commnd {
+func mapCommandFunction(args config.Arguments) {
+	switch args.Command {
 	case "register":
-		handlers.Register(args, userMap)
+		handlers.Register(&args)
 	case "add_label":
-		handlers.AddLabel(args, userMap, labelMap)
+		handlers.AddLabel(&args)
 	case "get_labels":
-		handlers.GetLabel(args, userMap, labelMap)
+		handlers.GetLabel(&args)
 	case "delete_label":
-		handlers.DeleteLabel(args, userMap, labelMap)
+		handlers.DeleteLabel(&args)
 
 	case "create_folder":
-		handlers.CreateFolder(args, userMap, folderMap)
+		handlers.CreateFolder(&args)
 	case "delete_folder":
-		handlers.DeleteFolder(args, userMap, folderMap)
+		handlers.DeleteFolder(&args)
 	case "get_folders":
-		handlers.GetFolders(args, userMap, folderMap, labelMap)
+		handlers.GetFolders(&args)
 	case "rename_folder":
-		handlers.RenameFolder(args, userMap, folderMap)
+		handlers.RenameFolder(&args)
 	case "add_folder_label":
-		handlers.AddFolderLabel(args, userMap, folderMap, labelMap)
+		handlers.AddFolderLabel(&args)
 	case "delete_folder_label":
-		handlers.AddFolderLabel(args, userMap, folderMap, labelMap)
+		handlers.AddFolderLabel(&args)
 
 	case "upload_file":
-		handlers.UploadFile(args, userMap, folderMap)
+		handlers.UploadFile(&args)
 	case "delete_file":
-		handlers.DeleteFile(args, userMap, folderMap)
+		handlers.DeleteFile(&args)
 	case "get_files":
-		handlers.GetFiles(args, userMap, folderMap)
+		handlers.GetFiles(&args)
 	default:
-		fmt.Printf("No command called: %s", commnd)
+		fmt.Printf("No command called: %s", args.Command)
 	}
 }

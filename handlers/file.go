@@ -10,20 +10,21 @@ import (
 	"go_fake_user_file_exam/config"
 )
 
-func UploadFile(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
-	if len(args) < 4 {
+func UploadFile(args *config.Arguments) {
+	if len(args.Options) < 4 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderId, fileName, description := args[0], args[1], args[2], args[3]
-	_, ok := userMap[userName]
+	options := args.Options
+	userName, folderId, fileName, description := options[0], options[1], options[2], options[3]
+	_, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	folder, ok := folderMap[folderId]
+	folder, ok := args.FolderMap[folderId]
 	if !ok {
 		fmt.Println("Error - folder_id not found")
 		return
@@ -44,20 +45,21 @@ func UploadFile(args []string, userMap map[string]config.User, folderMap map[str
 	fmt.Println("Success")
 }
 
-func DeleteFile(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
-	if len(args) < 3 {
+func DeleteFile(args *config.Arguments) {
+	if len(args.Options) < 3 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderId, fileName := args[0], args[1], args[2]
-	_, ok := userMap[userName]
+	options := args.Options
+	userName, folderId, fileName := options[0], options[1], options[2]
+	_, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
 	}
 
-	folder, ok := folderMap[folderId]
+	folder, ok := args.FolderMap[folderId]
 	if !ok {
 		fmt.Println("Error - folder_id not found")
 		return
@@ -74,14 +76,15 @@ func DeleteFile(args []string, userMap map[string]config.User, folderMap map[str
 	fmt.Println("Success")
 }
 
-func GetFiles(args []string, userMap map[string]config.User, folderMap map[string]*config.Folder) {
-	if len(args) < 2 {
+func GetFiles(args *config.Arguments) {
+	if len(args.Options) < 2 {
 		fmt.Println("Error - invalid arguments")
 		return
 	}
 
-	userName, folderId := args[0], args[1]
-	user, ok := userMap[userName]
+	options := args.Options
+	userName, folderId := options[0], options[1]
+	user, ok := args.UserMap[userName]
 	if !ok {
 		fmt.Println("Error - unknown user")
 		return
@@ -93,7 +96,7 @@ func GetFiles(args []string, userMap map[string]config.User, folderMap map[strin
 	}
 
 	files := []config.File{}
-	folder := folderMap[folderId]
+	folder := args.FolderMap[folderId]
 	for k := range folder.FileMap {
 		files = append(files, *folder.FileMap[k])
 	}
@@ -104,12 +107,12 @@ func GetFiles(args []string, userMap map[string]config.User, folderMap map[strin
 	}
 
 	orderField := config.SORT_NAME
-	if len(args) > 2 {
-		orderField = args[2]
+	if len(options) > 2 {
+		orderField = options[2]
 	}
 	order := config.ASC_SORT
-	if len(args) > 3 {
-		order = args[3]
+	if len(options) > 3 {
+		order = options[3]
 	}
 
 	if orderField == config.SORT_NAME && config.ASC_SORT == order {
