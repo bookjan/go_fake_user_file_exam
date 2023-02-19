@@ -25,7 +25,7 @@ Commonds:
   exit 
   `)
 
-	var args Arguments = Arguments{
+	var action Action = Action{
 		UserMap:   make(UserMap),
 		FolderMap: make(FolderMap),
 		LabelMap:  make(LabelMap),
@@ -60,9 +60,9 @@ Commonds:
 		if len(fields) < 2 {
 			fmt.Println(text)
 		} else {
-			args.Command = fields[0]
-			args.Options = fields[1:]
-			mapCommandFunction(args)
+			action.Command = fields[0]
+			action.Options = fields[1:]
+			mapCommandFunction(action)
 		}
 
 	}
@@ -72,37 +72,37 @@ Commonds:
 	}
 }
 
-func mapCommandFunction(args Arguments) {
-	switch args.Command {
+func mapCommandFunction(action Action) {
+	switch action.Command {
 	case "register":
-		Register(&args)
+		action.Register()
 	case "add_label":
-		AddLabel(&args)
+		action.AddLabel()
 	case "get_labels":
-		GetLabel(&args)
+		action.GetLabel()
 	case "delete_label":
-		DeleteLabel(&args)
+		action.DeleteLabel()
 
 	case "create_folder":
-		CreateFolder(&args)
+		action.CreateFolder()
 	case "delete_folder":
-		DeleteFolder(&args)
+		action.DeleteFolder()
 	case "get_folders":
-		GetFolders(&args)
+		action.GetFolders()
 	case "rename_folder":
-		RenameFolder(&args)
+		action.RenameFolder()
 	case "add_folder_label":
-		AddFolderLabel(&args)
+		action.AddFolderLabel()
 	case "delete_folder_label":
-		DeleteFolderLabel(&args)
+		action.DeleteFolderLabel()
 
 	case "upload_file":
-		UploadFile(&args)
+		action.UploadFile()
 	case "delete_file":
-		DeleteFile(&args)
+		action.DeleteFile()
 	case "get_files":
-		GetFiles(&args)
+		action.GetFiles()
 	default:
-		fmt.Printf("No command called: %s", args.Command)
+		fmt.Printf("No command called: %s", action.Command)
 	}
 }

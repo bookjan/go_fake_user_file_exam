@@ -29,7 +29,7 @@ type UserMap map[string]*User
 type FolderMap map[string]*Folder
 type LabelMap map[string]*Label
 
-type Arguments struct {
+type Action struct {
 	Command   string
 	Options   []string
 	UserMap   UserMap

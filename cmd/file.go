@@ -51,21 +51,21 @@ func (x SortFileByExtension) Swap(i, j int) {
 	x[i], x[j] = x[j], x[i]
 }
 
-func UploadFile(args *Arguments) {
-	if len(args.Options) < 4 {
+func (action *Action) UploadFile() {
+	if len(action.Options) < 4 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderId, fileName, description := options[0], options[1], options[2], options[3]
-	_, ok := args.UserMap[userName]
+	_, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	folder, ok := args.FolderMap[folderId]
+	folder, ok := action.FolderMap[folderId]
 	if !ok {
 		util.PrintOrLog("folder_id not found", util.Error)
 		return
@@ -88,21 +88,21 @@ func UploadFile(args *Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func DeleteFile(args *Arguments) {
-	if len(args.Options) < 3 {
+func (action *Action) DeleteFile() {
+	if len(action.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderId, fileName := options[0], options[1], options[2]
-	_, ok := args.UserMap[userName]
+	_, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	folder, ok := args.FolderMap[folderId]
+	folder, ok := action.FolderMap[folderId]
 	if !ok {
 		util.PrintOrLog("folder_id not found", util.Error)
 		return
@@ -119,15 +119,15 @@ func DeleteFile(args *Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func GetFiles(args *Arguments) {
-	if len(args.Options) < 2 {
+func (action *Action) GetFiles() {
+	if len(action.Options) < 2 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderId := options[0], options[1]
-	user, ok := args.UserMap[userName]
+	user, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
@@ -139,7 +139,7 @@ func GetFiles(args *Arguments) {
 	}
 
 	files := []*File{}
-	folder := args.FolderMap[folderId]
+	folder := action.FolderMap[folderId]
 	for k := range folder.FileMap {
 		files = append(files, folder.FileMap[k])
 	}

@@ -38,15 +38,15 @@ func (x SortFolderByTime) Swap(i, j int) {
 	x[i], x[j] = x[j], x[i]
 }
 
-func CreateFolder(args *Arguments) {
-	if len(args.Options) < 3 {
+func (action *Action) CreateFolder() {
+	if len(action.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderName, description := options[0], options[1], options[2]
-	user, ok := args.UserMap[userName]
+	user, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
@@ -54,7 +54,7 @@ func CreateFolder(args *Arguments) {
 
 	FOLDER_ID_BASE += 1
 	folderId := fmt.Sprint(FOLDER_ID_BASE)
-	args.FolderMap[folderId] = &Folder{
+	action.FolderMap[folderId] = &Folder{
 		Base: Base{
 			Id:          folderId,
 			Name:        folderName,
@@ -70,21 +70,21 @@ func CreateFolder(args *Arguments) {
 	util.PrintOrLog(folderId, util.Trace)
 }
 
-func DeleteFolder(args *Arguments) {
-	if len(args.Options) < 2 {
+func (action *Action) DeleteFolder() {
+	if len(action.Options) < 2 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderId := options[0], options[1]
-	user, ok := args.UserMap[userName]
+	user, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	_, ok = args.FolderMap[folderId]
+	_, ok = action.FolderMap[folderId]
 	if !ok {
 		util.PrintOrLog("folder doesn’t exist", util.Error)
 		return
@@ -96,21 +96,21 @@ func DeleteFolder(args *Arguments) {
 		return
 	}
 
-	delete(args.FolderMap, folderId)
+	delete(action.FolderMap, folderId)
 	delete(user.FolderIdMap, folderId)
 
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func GetFolders(args *Arguments) {
-	if len(args.Options) < 1 {
+func (action *Action) GetFolders() {
+	if len(action.Options) < 1 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName := options[0]
-	user, ok := args.UserMap[userName]
+	user, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
@@ -119,7 +119,7 @@ func GetFolders(args *Arguments) {
 	folders := []*Folder{}
 	folderIds := []string{}
 	for k := range user.FolderIdMap {
-		folders = append(folders, args.FolderMap[k])
+		folders = append(folders, action.FolderMap[k])
 		folderIds = append(folderIds, k)
 	}
 
@@ -135,7 +135,7 @@ func GetFolders(args *Arguments) {
 		labelName = options[1]
 	}
 
-	_, ok = args.LabelMap[labelName]
+	_, ok = action.LabelMap[labelName]
 	if labelName != "" && !ok {
 		util.PrintOrLog("the label is not exists", util.Error)
 		return
@@ -173,52 +173,52 @@ func GetFolders(args *Arguments) {
 	}
 }
 
-func RenameFolder(args *Arguments) {
-	if len(args.Options) < 3 {
+func (action *Action) RenameFolder() {
+	if len(action.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderId, newFolderName := options[0], options[1], options[2]
-	_, ok := args.UserMap[userName]
+	_, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	_, ok = args.FolderMap[folderId]
+	_, ok = action.FolderMap[folderId]
 	if !ok {
 		util.PrintOrLog("folder_id not found", util.Error)
 		return
 	}
 
-	args.FolderMap[folderId].Name = newFolderName
+	action.FolderMap[folderId].Name = newFolderName
 
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func AddFolderLabel(args *Arguments) {
-	if len(args.Options) < 3 {
+func (action *Action) AddFolderLabel() {
+	if len(action.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderId, labelName := options[0], options[1], options[2]
-	_, ok := args.UserMap[userName]
+	_, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	_, ok = args.LabelMap[labelName]
+	_, ok = action.LabelMap[labelName]
 	if !ok {
 		util.PrintOrLog("the label name not exists", util.Error)
 		return
 	}
 
-	folder, ok := args.FolderMap[folderId]
+	folder, ok := action.FolderMap[folderId]
 	if !ok {
 		util.PrintOrLog("folder not exists", util.Error)
 		return
@@ -229,21 +229,21 @@ func AddFolderLabel(args *Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func DeleteFolderLabel(args *Arguments) {
-	if len(args.Options) < 3 {
+func (action *Action) DeleteFolderLabel() {
+	if len(action.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, folderId, labelName := options[0], options[1], options[2]
-	_, ok := args.UserMap[userName]
+	_, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	folder, ok := args.FolderMap[folderId]
+	folder, ok := action.FolderMap[folderId]
 	if !ok {
 		util.PrintOrLog("folder not exists", util.Error)
 		return

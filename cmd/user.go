@@ -13,12 +13,12 @@ type User struct {
 	LabelNameMap map[string]bool
 }
 
-func Register(args *Arguments) {
-	userName := args.Options[0]
-	_, ok := args.UserMap[userName]
+func (action *Action) Register() {
+	userName := action.Options[0]
+	_, ok := action.UserMap[userName]
 	if !ok {
 		USER_ID_BASE += 1
-		args.UserMap[userName] = &User{
+		action.UserMap[userName] = &User{
 			Base: Base{
 				Id:   fmt.Sprint(USER_ID_BASE),
 				Name: userName,
@@ -33,28 +33,28 @@ func Register(args *Arguments) {
 	}
 }
 
-func AddLabel(args *Arguments) {
-	if len(args.Options) < 3 {
+func (action *Action) AddLabel() {
+	if len(action.Options) < 3 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, labelName, color := options[0], options[1], options[2]
-	user, ok := args.UserMap[userName]
+	user, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	_, ok = args.LabelMap[labelName]
+	_, ok = action.LabelMap[labelName]
 	if ok {
 		util.PrintOrLog("the label name existing", util.Error)
 		return
 	}
 
 	user.LabelNameMap[labelName] = true
-	args.LabelMap[labelName] = &Label{
+	action.LabelMap[labelName] = &Label{
 		Base: Base{
 			Name:      labelName,
 			CreatedAt: time.Now(),
@@ -65,40 +65,40 @@ func AddLabel(args *Arguments) {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func GetLabel(args *Arguments) {
-	if len(args.Options) < 1 {
+func (action *Action) GetLabel() {
+	if len(action.Options) < 1 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	userName := args.Options[0]
-	user, ok := args.UserMap[userName]
+	userName := action.Options[0]
+	user, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
 	for k := range user.LabelNameMap {
-		v := args.LabelMap[k]
+		v := action.LabelMap[k]
 		fmt.Printf("%v|%v|%v|%v", v.Name, v.Color, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
 	}
 }
 
-func DeleteLabel(args *Arguments) {
-	if len(args.Options) < 2 {
+func (action *Action) DeleteLabel() {
+	if len(action.Options) < 2 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return
 	}
 
-	options := args.Options
+	options := action.Options
 	userName, labelName := options[0], options[1]
-	user, ok := args.UserMap[userName]
+	user, ok := action.UserMap[userName]
 	if !ok {
 		util.PrintOrLog("unknown user", util.Error)
 		return
 	}
 
-	_, ok = args.LabelMap[labelName]
+	_, ok = action.LabelMap[labelName]
 	if !ok {
 		util.PrintOrLog("the label name not exists", util.Error)
 		return
