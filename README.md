@@ -16,6 +16,13 @@ cd {project_folder}
 ./run.sh
 ```
 
+## Run Unit test
+```shell
+cd {project_folder}
+go test ./...
+```
+
+
 ## Notes
 Test Go version: 1.19.4
 Test platform: Mac OS Ventura 13.1
