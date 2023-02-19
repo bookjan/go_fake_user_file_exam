@@ -4,6 +4,22 @@ import (
 	"time"
 )
 
+const (
+	Register          = "register"
+	AddLabel          = "add_label"
+	GetLabels         = "get_labels"
+	DeleteLabel       = "delete_label"
+	CreateFolder      = "create_folder"
+	DeleteFolder      = "delete_folder"
+	GetFolders        = "get_folders"
+	RenameFolder      = "rename_folder"
+	AddFolderLabel    = "add_folder_label"
+	DeleteFolderLabel = "delete_folder_label"
+	UploadFile        = "upload_file"
+	DeleteFile        = "delete_file"
+	GetFiles          = "get_files"
+)
+
 const SORT_NAME = "sort_name"
 const SORT_TIME = "sort_time"
 const SORT_EXTENSION = "sort_extension"

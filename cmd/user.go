@@ -65,7 +65,7 @@ func (action *Action) AddLabel() {
 	util.PrintOrLog("Success", util.Trace)
 }
 
-func (action *Action) GetLabel() {
+func (action *Action) GetLabels() {
 	if len(action.Options) < 1 {
 		util.PrintOrLog("invalid arguments", util.Error)
 		return

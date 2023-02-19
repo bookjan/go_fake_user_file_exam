@@ -74,33 +74,33 @@ Commonds:
 
 func mapCommandFunction(action Action) {
 	switch action.Command {
-	case "register":
+	case Register:
 		action.Register()
-	case "add_label":
+	case AddLabel:
 		action.AddLabel()
-	case "get_labels":
-		action.GetLabel()
-	case "delete_label":
+	case GetLabels:
+		action.GetLabels()
+	case DeleteLabel:
 		action.DeleteLabel()
 
-	case "create_folder":
+	case CreateFolder:
 		action.CreateFolder()
-	case "delete_folder":
+	case DeleteFolder:
 		action.DeleteFolder()
-	case "get_folders":
+	case GetFolders:
 		action.GetFolders()
-	case "rename_folder":
+	case RenameFolder:
 		action.RenameFolder()
-	case "add_folder_label":
+	case AddFolderLabel:
 		action.AddFolderLabel()
-	case "delete_folder_label":
+	case DeleteFolderLabel:
 		action.DeleteFolderLabel()
 
-	case "upload_file":
+	case UploadFile:
 		action.UploadFile()
-	case "delete_file":
+	case DeleteFile:
 		action.DeleteFile()
-	case "get_files":
+	case GetFiles:
 		action.GetFiles()
 	default:
 		fmt.Printf("No command called: %s", action.Command)
