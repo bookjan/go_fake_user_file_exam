@@ -11,6 +11,8 @@ import (
 )
 
 func Execute() {
+	util.Logging = LOGGING
+
 	fmt.Println(`Go's fake user and file CLI program`)
 	fmt.Println(`
 Commonds: 

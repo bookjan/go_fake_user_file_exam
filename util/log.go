@@ -14,6 +14,8 @@ const (
 	Fatal
 )
 
+var Logging bool
+
 func PrintOrLog(s string, level int) {
 	switch level {
 	case Debug:
@@ -34,15 +36,17 @@ func PrintOrLog(s string, level int) {
 		fmt.Println(s)
 	}
 
-	// write to the log file
-	switch level {
-	case Warn:
-		writeLog(s, "Warn.log")
-	case Error:
-		writeLog(s, "Error.log")
-	case Fatal:
-		writeLog(s, "Fatal.log")
-	default:
+	if Logging {
+		// write to the log file
+		switch level {
+		case Warn:
+			writeLog(s, "Warn.log")
+		case Error:
+			writeLog(s, "Error.log")
+		case Fatal:
+			writeLog(s, "Fatal.log")
+		default:
+		}
 	}
 }
 
