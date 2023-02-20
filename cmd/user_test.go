@@ -100,3 +100,40 @@ func TestGetLabels(t *testing.T) {
 		t.Error("wrong result")
 	}
 }
+
+func TestDeleteLabel(t *testing.T) {
+	userName := "user1"
+	labelName := "label1"
+	labelColor := "red"
+	userMap := make(UserMap)
+	folderMap := make(FolderMap)
+	labelMap := make(LabelMap)
+
+	var action1 Action = Action{
+		Options:   []string{userName},
+		UserMap:   userMap,
+		FolderMap: folderMap,
+		LabelMap:  labelMap,
+	}
+	action1.Register()
+
+	var action2 Action = Action{
+		Options:   []string{userName, labelName, labelColor},
+		UserMap:   userMap,
+		FolderMap: folderMap,
+		LabelMap:  labelMap,
+	}
+	action2.AddLabel()
+
+	var action3 Action = Action{
+		Options:   []string{userName, labelName},
+		UserMap:   userMap,
+		FolderMap: folderMap,
+		LabelMap:  labelMap,
+	}
+
+	msg, _ := action3.DeleteLabel()
+	if msg != "Success" {
+		t.Error("wrong result")
+	}
+}
