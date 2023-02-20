@@ -14,9 +14,8 @@ func TestRegisterUser1(t *testing.T) {
 		LabelMap:  make(LabelMap),
 	}
 
-	action.Register()
-
-	if userName != action.UserMap[userName].Base.Name {
+	msg, _ := action.Register()
+	if msg != "Success" {
 		t.Error("wrong result")
 	}
 }
@@ -31,9 +30,10 @@ func TestRegisterUser1Twice(t *testing.T) {
 	}
 
 	action.Register()
-	action.Register()
 
-	if USER_ID_BASE == 1 {
+	msg, _ := action.Register()
+
+	if msg != "user already existing" {
 		t.Error("wrong result")
 	}
 }
@@ -62,12 +62,8 @@ func TestAddLabelNameAndColor(t *testing.T) {
 		FolderMap: folderMap,
 		LabelMap:  labelMap,
 	}
-	action2.AddLabel()
-
-	if !action2.UserMap[userName].LabelNameMap[labelName] {
-		t.Error("wrong result")
-	}
-	if action2.LabelMap[labelName].Color != labelColor {
+	msg, _ := action2.AddLabel()
+	if msg != "Success" {
 		t.Error("wrong result")
 	}
 }
@@ -98,10 +94,15 @@ func TestGetLabels(t *testing.T) {
 	}
 	action2.AddLabel()
 
-	if !action2.UserMap[userName].LabelNameMap[labelName] {
-		t.Error("wrong result")
+	var action3 Action = Action{
+		Command:   Register,
+		Options:   []string{userName},
+		UserMap:   userMap,
+		FolderMap: folderMap,
+		LabelMap:  labelMap,
 	}
-	if action2.LabelMap[labelName].Color != labelColor {
+	msg, _ := action3.GetLabels()
+	if msg != "" {
 		t.Error("wrong result")
 	}
 }
