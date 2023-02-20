@@ -156,7 +156,12 @@ func (action *Action) GetFolders() (msg string, logLevel int) {
 
 	for _, v := range folders {
 		if labelName != "" {
-			fmt.Printf("%v|%v|%v|%v|%v|%v\n", v.Id, labelName, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
+			hasLabel := v.LabelNameMap[labelName]
+			folderLabelName := ""
+			if hasLabel {
+				folderLabelName = labelName
+			}
+			fmt.Printf("%v|%v|%v|%v|%v|%v\n", v.Id, folderLabelName, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
 		} else {
 			fmt.Printf("%v|%v|%v|%v|%v\n", v.Id, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
 		}
