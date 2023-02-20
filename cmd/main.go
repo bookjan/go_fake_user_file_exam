@@ -77,33 +77,33 @@ Commonds:
 func mapCommandFunction(action Action) {
 	switch action.Command {
 	case Register:
-		action.Register()
+		util.PrintOrLog(action.Register())
 	case AddLabel:
-		action.AddLabel()
+		util.PrintOrLog(action.AddLabel())
 	case GetLabels:
-		action.GetLabels()
+		util.PrintOrLog(action.GetLabels())
 	case DeleteLabel:
-		action.DeleteLabel()
+		util.PrintOrLog(action.DeleteLabel())
 
 	case CreateFolder:
-		action.CreateFolder()
+		util.PrintOrLog(action.CreateFolder())
 	case DeleteFolder:
-		action.DeleteFolder()
+		util.PrintOrLog(action.DeleteFolder())
 	case GetFolders:
-		action.GetFolders()
+		util.PrintOrLog(action.GetFolders())
 	case RenameFolder:
-		action.RenameFolder()
+		util.PrintOrLog(action.RenameFolder())
 	case AddFolderLabel:
-		action.AddFolderLabel()
+		util.PrintOrLog(action.AddFolderLabel())
 	case DeleteFolderLabel:
-		action.DeleteFolderLabel()
+		util.PrintOrLog(action.DeleteFolderLabel())
 
 	case UploadFile:
-		action.UploadFile()
+		util.PrintOrLog(action.UploadFile())
 	case DeleteFile:
-		action.DeleteFile()
+		util.PrintOrLog(action.DeleteFile())
 	case GetFiles:
-		action.GetFiles()
+		util.PrintOrLog(action.GetFiles())
 	default:
 		fmt.Printf("No command called: %s", action.Command)
 	}

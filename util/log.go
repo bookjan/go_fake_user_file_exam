@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	Trace = iota
+	Trace = iota + 1
 	Debug
 	Info
 	Warn

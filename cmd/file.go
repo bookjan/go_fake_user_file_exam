@@ -51,24 +51,21 @@ func (x SortFileByExtension) Swap(i, j int) {
 	x[i], x[j] = x[j], x[i]
 }
 
-func (action *Action) UploadFile() {
+func (action *Action) UploadFile() (msg string, logLevel int) {
 	if len(action.Options) < 4 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderId, fileName, description := options[0], options[1], options[2], options[3]
 	_, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	folder, ok := action.FolderMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder_id not found", util.Error)
-		return
+		return "folder_id not found", util.Error
 	}
 
 	re := regexp.MustCompile(`^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))`)
@@ -85,57 +82,51 @@ func (action *Action) UploadFile() {
 		Extension: Extension,
 	}
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }
 
-func (action *Action) DeleteFile() {
+func (action *Action) DeleteFile() (msg string, logLevel int) {
 	if len(action.Options) < 3 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderId, fileName := options[0], options[1], options[2]
 	_, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	folder, ok := action.FolderMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder_id not found", util.Error)
-		return
+		return "folder_id not found", util.Error
 	}
 
 	_, ok = folder.FileMap[fileName]
 	if !ok {
-		util.PrintOrLog("file_name not found", util.Error)
-		return
+		return "file_name not found", util.Error
 	}
 
 	delete(folder.FileMap, fileName)
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }
 
-func (action *Action) GetFiles() {
+func (action *Action) GetFiles() (msg string, logLevel int) {
 	if len(action.Options) < 2 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderId := options[0], options[1]
 	user, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	_, ok = user.FolderIdMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder_name not found", util.Error)
+		return "folder_name not found", util.Error
 	}
 
 	files := []*File{}
@@ -145,8 +136,7 @@ func (action *Action) GetFiles() {
 	}
 
 	if len(files) == 0 {
-		util.PrintOrLog("empty files", util.Warn)
-		return
+		return "empty files", util.Warn
 	}
 
 	orderField := SORT_NAME
@@ -183,4 +173,6 @@ func (action *Action) GetFiles() {
 		fullFileName := v.Name + "." + v.Extension
 		fmt.Printf("%v|%v|%v|%v|%v\n", fullFileName, v.Extension, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
 	}
+
+	return "", 0
 }

@@ -13,7 +13,7 @@ type User struct {
 	LabelNameMap map[string]bool
 }
 
-func (action *Action) Register() {
+func (action *Action) Register() (msg string, logLevel int) {
 	userName := action.Options[0]
 	_, ok := action.UserMap[userName]
 	if !ok {
@@ -27,30 +27,27 @@ func (action *Action) Register() {
 			LabelNameMap: map[string]bool{},
 		}
 
-		util.PrintOrLog("Success", util.Trace)
+		return "Success", util.Trace
 	} else {
-		util.PrintOrLog("user already existing", util.Error)
+		return "user already existing", util.Error
 	}
 }
 
-func (action *Action) AddLabel() {
+func (action *Action) AddLabel() (msg string, logLevel int) {
 	if len(action.Options) < 3 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, labelName, color := options[0], options[1], options[2]
 	user, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	_, ok = action.LabelMap[labelName]
 	if ok {
-		util.PrintOrLog("the label name existing", util.Error)
-		return
+		return "the label name existing", util.Error
 	}
 
 	user.LabelNameMap[labelName] = true
@@ -62,55 +59,51 @@ func (action *Action) AddLabel() {
 		Color: color,
 	}
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }
 
-func (action *Action) GetLabels() {
+func (action *Action) GetLabels() (msg string, logLevel int) {
 	if len(action.Options) < 1 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	userName := action.Options[0]
 	user, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	for k := range user.LabelNameMap {
 		v := action.LabelMap[k]
 		fmt.Printf("%v|%v|%v|%v", v.Name, v.Color, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
 	}
+
+	return "", 0
 }
 
-func (action *Action) DeleteLabel() {
+func (action *Action) DeleteLabel() (msg string, logLevel int) {
 	if len(action.Options) < 2 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, labelName := options[0], options[1]
 	user, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	_, ok = action.LabelMap[labelName]
 	if !ok {
-		util.PrintOrLog("the label name not exists", util.Error)
-		return
+		return "the label name not exists", util.Error
 	}
 
 	_, ok = user.LabelNameMap[labelName]
 	if !ok {
-		util.PrintOrLog("owner mismatch", util.Error)
-		return
+		return "owner mismatch", util.Error
 	}
 
 	delete(user.LabelNameMap, labelName)
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }

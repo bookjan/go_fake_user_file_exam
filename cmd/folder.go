@@ -38,18 +38,16 @@ func (x SortFolderByTime) Swap(i, j int) {
 	x[i], x[j] = x[j], x[i]
 }
 
-func (action *Action) CreateFolder() {
+func (action *Action) CreateFolder() (msg string, logLevel int) {
 	if len(action.Options) < 3 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderName, description := options[0], options[1], options[2]
 	user, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	FOLDER_ID_BASE += 1
@@ -67,53 +65,47 @@ func (action *Action) CreateFolder() {
 
 	user.FolderIdMap[folderId] = true
 
-	util.PrintOrLog(folderId, util.Trace)
+	return folderId, util.Trace
 }
 
-func (action *Action) DeleteFolder() {
+func (action *Action) DeleteFolder() (msg string, logLevel int) {
 	if len(action.Options) < 2 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderId := options[0], options[1]
 	user, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	_, ok = action.FolderMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder doesn’t exist", util.Error)
-		return
+		return "folder doesn’t exist", util.Error
 	}
 
 	_, ok = user.FolderIdMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder owner not match", util.Error)
-		return
+		return "folder owner not match", util.Error
 	}
 
 	delete(action.FolderMap, folderId)
 	delete(user.FolderIdMap, folderId)
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }
 
-func (action *Action) GetFolders() {
+func (action *Action) GetFolders() (msg string, logLevel int) {
 	if len(action.Options) < 1 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName := options[0]
 	user, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	folders := []*Folder{}
@@ -124,8 +116,7 @@ func (action *Action) GetFolders() {
 	}
 
 	if len(folderIds) == 0 {
-		util.PrintOrLog("empty folders", util.Warn)
-		return
+		return "empty folders", util.Warn
 	}
 
 	labelName := ""
@@ -137,8 +128,7 @@ func (action *Action) GetFolders() {
 
 	_, ok = action.LabelMap[labelName]
 	if labelName != "" && !ok {
-		util.PrintOrLog("the label is not exists", util.Error)
-		return
+		return "the label is not exists", util.Error
 	}
 
 	orderField := SORT_NAME
@@ -171,85 +161,77 @@ func (action *Action) GetFolders() {
 			fmt.Printf("%v|%v|%v|%v|%v\n", v.Id, v.Name, v.Description, v.CreatedAt.Format("2006-01-02 15:04:05"), userName)
 		}
 	}
+
+	return "", 0
 }
 
-func (action *Action) RenameFolder() {
+func (action *Action) RenameFolder() (msg string, logLevel int) {
 	if len(action.Options) < 3 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderId, newFolderName := options[0], options[1], options[2]
 	_, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	_, ok = action.FolderMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder_id not found", util.Error)
-		return
+		return "folder_id not found", util.Error
 	}
 
 	action.FolderMap[folderId].Name = newFolderName
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }
 
-func (action *Action) AddFolderLabel() {
+func (action *Action) AddFolderLabel() (msg string, logLevel int) {
 	if len(action.Options) < 3 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderId, labelName := options[0], options[1], options[2]
 	_, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	_, ok = action.LabelMap[labelName]
 	if !ok {
-		util.PrintOrLog("the label name not exists", util.Error)
-		return
+		return "the label name not exists", util.Error
 	}
 
 	folder, ok := action.FolderMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder not exists", util.Error)
-		return
+		return "folder not exists", util.Error
 	}
 
 	folder.LabelNameMap[labelName] = true
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }
 
-func (action *Action) DeleteFolderLabel() {
+func (action *Action) DeleteFolderLabel() (msg string, logLevel int) {
 	if len(action.Options) < 3 {
-		util.PrintOrLog("invalid arguments", util.Error)
-		return
+		return "invalid arguments", util.Error
 	}
 
 	options := action.Options
 	userName, folderId, labelName := options[0], options[1], options[2]
 	_, ok := action.UserMap[userName]
 	if !ok {
-		util.PrintOrLog("unknown user", util.Error)
-		return
+		return "unknown user", util.Error
 	}
 
 	folder, ok := action.FolderMap[folderId]
 	if !ok {
-		util.PrintOrLog("folder not exists", util.Error)
-		return
+		return "folder not exists", util.Error
 	}
 
 	delete(folder.LabelNameMap, labelName)
 
-	util.PrintOrLog("Success", util.Trace)
+	return "Success", util.Trace
 }
